@@ -7,7 +7,7 @@
 - Binary separation: **01_project_agnostic** (capabilities) vs **02_project_specific** (state/data)
 - Tools organized by functional decomposition (setup → planning → implementation → organization → testing)
 - Procedural docs organized chronologically (execution order), not functionally
-- Knowledge base uses flat schema mimicking future database tables (files, history, analytics, metadata)
+- Knowledge base (02/) uses process-step organization mirroring 01/ structure for intuitive navigation
 
 **Implementation Plan (Workflow Doc)**
 - 5-step bootstrap: structure definition → repo creation → tool cleanup → migration → validation
@@ -20,10 +20,7 @@
 ## Neutral Review: Uncertainties, Assumptions, Areas for Improvement
 
 ### Uncertainties
-1. **Chronological vs Functional Tension**: Procedural docs organized chronologically while tools are functional - navigation may be confusing when same tool referenced at multiple workflow stages
-2. **Knowledge Base Prematurity**: Flat schema designed for "future database migration" but no concrete database plan, data volume estimates, or query patterns defined
-3. **Scope Creep Risk**: Planning docs gitignored locally but unclear why they exist in a "project-agnostic" system - planning is inherently project-specific
-4. **Tool Boundaries**: No definition of what qualifies as a "tool" vs a "procedure" vs configuration - could lead to inconsistent categorization
+1. **Chronological vs Functional Tension**: Procedural docs organized chronologically while tools are functional - navigation may be confusing when same tool referenced at multiple workflow stages (NOTE: 02/ now mirrors 01/ structure, reducing this tension)
 
 ### Assumptions
 1. Assumes tools are truly project-agnostic without defining validation criteria
@@ -33,9 +30,8 @@
 
 ### Radical Simplicity Gaps
 1. **Overengineering the Separation**: Two top-level folders with complex internal structures before proving basic utility
-2. **Database Preparation Without Need**: Building schema-like structures for data that may never need a database
-3. **Missing MVP Definition**: No minimal working example or "simplest useful thing" identified
-4. **Procedural Docs Separate from Tools**: Forces users to jump between locations; inline documentation might suffice initially
+2. **Missing MVP Definition**: No minimal working example or "simplest useful thing" identified (ADDRESSED: MVP.md now defines single tool + procedure scope)
+3. **Procedural Docs Separate from Tools**: Forces users to jump between locations; inline documentation might suffice initially
 
 ---
 
@@ -45,26 +41,50 @@
    - Which single tool + procedure combination would prove this architecture's worth in an actual project? Start there, not with the full system.
 
 2. **What triggers the project-agnostic → project-specific boundary?**
-   - How do tools know when to write to knowledge base vs remain stateless? What's the interface/contract between 01 and 02?
+   - How do tools know when to write to knowledge base vs remain stateless? What's the interface/contract between 01 and 02? (ADDRESSED: Tools use hardcoded relative paths to write to process-step folders in 02/)
 
 3. **How does this differ from package + config?**
    - Could this be a Python package (tools) + YAML config (procedures) + SQLite (knowledge base) in a standard project structure? What necessitates the custom `.agentic_repo_tools/` architecture?
 
 ---
 
-## Recommended Changes
+## Recommended Changes (REVISED)
 
-### Priority 1: Collapse to Essentials
-1. **Start with single tool end-to-end**: Pick ONE tool (logging recommended), implement it fully with inline procedural docs, validate in real project
-2. **Defer knowledge base entirely**: Start with no 02/ folder - add only when data persistence becomes actual pain point
-3. **Merge procedural into tools initially**: Co-locate instructions with code until volume demands separation
+### Status: Architecture Decisions Made, Ready for Implementation
 
-### Priority 2: Clarify Boundaries
-4. **Define tool interface contract**: Specify exactly how tools interact with project state (env vars, config files, CLI args)
-5. **Create decision tree**: Flowchart for "should this be a tool, procedure, config, or external dependency?"
-6. **Remove planning_docs from 01/**: Planning is project-specific by definition - eliminate or move to 02/
+**Key Progress:**
+- Planning framework established (Vision, MVP, Roadmap, Sprint outlines created)
+- Process-step organization chosen (intuitive, pragmatic)
+- Tool/procedure boundary defined (deterministic vs agentic)
+- Tool-to-knowledge-base interface specified (relative paths)
+- Dogfooding approach confirmed (build in this repo first)
 
-### Priority 3: Proof Before Structure
-7. **Implement in existing project first**: Build this inside `agentic_repo_tool` itself as dogfooding before abstracting
-8. **Measure before optimizing**: Track what files get accessed most, what procedures run most - inform structure with data
-9. **Version 0.1 scope**: Define minimal feature set (e.g., "3 tools + 1 workflow + README") before building infrastructure for future extensions
+### Remaining Critical Path to MVP
+
+**1. Complete Planning Documentation** (Sprint 0 completion)
+- Fill in Vision.md (problem, users, value prop)
+- Fill in MVP.md (choose specific tool + procedure, define success criteria)
+- Update Sprint_Planning.md with concrete tasks
+
+**2. Implement Single Tool End-to-End** (Sprint 1)
+- Select one tool (logging_tool recommended based on agentic_tools_brainstorming.md)
+- Clean and integrate into `.agentic_repo_tools/01_project_agnostic_agentic_system/tools_src/implementation/`
+- Write inline procedural doc (how to use the tool in agentic workflow)
+- Test in this repo, validate output goes to `02/implementation/`
+
+**3. Validate Architecture Through Use**
+- Does process-step organization work intuitively?
+- Are relative paths reliable?
+- Is the 01/02 separation actually useful or just overhead?
+- Document lessons learned in Sprint retrospective
+
+**4. Decision Gate: Expand or Refine?**
+- If validation successful: add 2nd tool following same pattern
+- If issues found: refactor architecture before expanding
+- DO NOT build infrastructure (installers, orchestration, dashboards) until 3+ tools proven
+
+### What NOT to Do Yet
+- Don't build config system (hardcoded paths work for MVP)
+- Don't create multiple procedural docs (inline with tool for now)
+- Don't populate all of 02/ structure (only implementation/ needed for logging tool)
+- Don't abstract/generalize (learn from concrete examples first)
