@@ -16,6 +16,8 @@ AI coding assistants have dramatically increased in capability enabling "vibe co
 
 We are at a point where the AI agent is as capable as a human software developer (one in the upper 99th percentile) - and yet the organizational/structural/deterministic scaffolding around them is immature - not yet capable of remaining organized.
 
+**This creates a form of "cognitive debt"** - when AI-generated projects develop faster than humans can learn or remember them. The codebase becomes more complex than the human can fully understand, undermining the human's ability to make informed strategic decisions or provide clear direction. Vibe-coding is only as effective as the human's ability to understand what's been built - and that understanding depends critically on how clean and organized the code remains.
+
 The human corporation is a complex system more than the sum of its parts: intelligent, adaptive, self-regulating - the qualities required for organizations to survive against competition - and indeed many organizations are now dying as they were formed in a period in which such rapid change was not occurring, and the habits it conferred are not suitable today.
 
 Once AI agents have the organizational scaffolding to support them, they will glide past their current barriers.
@@ -41,6 +43,8 @@ And we are not so naive as to think that others aren't having the same thoughts 
 AI agents excel at **generation** (writing code, reasoning about problems, proposing solutions) but struggle with **organization** (refactoring safely, maintaining structure, managing dependencies). This isn't a capability limitation—it's a tooling gap.
 
 When an agent writes code via "vibe coding," each token generation costs compute. When that agent needs to refactor by trial-and-error (move file → break links → debug → fix → repeat), the cost multiplies. The agent has the reasoning capability but lacks the deterministic scaffolding to execute organizational tasks reliably.
+
+**The human pays a price too:** As the codebase grows disorganized, cognitive debt accumulates. The human can no longer fully grasp the system they're directing. Clean organization—high signal-to-noise ratio, clear separation of concerns, form-following-function architecture—allows both humans and machines to understand the system. Without it, human-driven vibe-coding degrades because the human cannot provide informed strategic guidance.
 
 ### Economics: Scaffolding vs. Compute
 
