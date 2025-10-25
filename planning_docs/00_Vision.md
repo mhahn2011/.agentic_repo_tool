@@ -12,27 +12,24 @@ AI agents can reason and generate code, but they need reliable utilities for ref
 
 ## The Problem
 
-AI coding assistants have dramatically increased in capability enabling "vibe coding" which allows non-coders to describe a thing they desire and have AI do the rest. However, vibe-coded projects can quickly become "spaghetti code" - having more noise than signal such that they become useless. This is the level of our current development.
+AI coding assistants have dramatically increased in capability, enabling "vibe coding" where non-coders describe what they want and AI does the rest. But vibe-coded projects quickly become "spaghetti code"—more noise than signal, effectively unusable.
 
-We are at a point where the AI agent is as capable as a human software developer (one in the upper 99th percentile) - and yet the organizational/structural/deterministic scaffolding around them is immature - not yet capable of remaining organized.
+**The root cause is cognitive debt.** AI-generated projects develop faster than humans can learn or remember them. The codebase becomes too complex for the human to fully grasp, undermining their ability to make informed strategic decisions or provide clear direction. Vibe-coding is only as effective as the human's ability to understand what's been built—and that depends on how clean and organized the code remains.
 
-**This creates a form of "cognitive debt"** - when AI-generated projects develop faster than humans can learn or remember them. The codebase becomes more complex than the human can fully understand, undermining the human's ability to make informed strategic decisions or provide clear direction. Vibe-coding is only as effective as the human's ability to understand what's been built - and that understanding depends critically on how clean and organized the code remains.
+**The gap isn't agent capability—it's organizational scaffolding.** Current AI agents code at 99th percentile human level, yet they lack the deterministic tools to maintain organization as they build. Many tasks that vibe-coders repeatedly ask agents to do are repetitive enough for automation-via-scripting. This is our opportunity.
 
-The human corporation is a complex system more than the sum of its parts: intelligent, adaptive, self-regulating - the qualities required for organizations to survive against competition - and indeed many organizations are now dying as they were formed in a period in which such rapid change was not occurring, and the habits it conferred are not suitable today.
+**Human organizations provide the analogy.** Corporations aren't just collections of smart people—they're held together by processes, norms, systems, and tools. Accounting systems, HR workflows, project management processes—these deterministic structures enable intelligent people to coordinate at scale. A script is a process. A linter is a norm. A file-organization tool is a system.
 
-Once AI agents have the organizational scaffolding to support them, they will glide past their current barriers.
+**Agents need the same scaffolding.** Imagine an agent with a tool that safely moves files—analyzing dependencies, updating links, validating nothing broke—all deterministically in milliseconds. That agent could refactor freely, experiment with organizational improvements, test them, measure results, and iterate. The agent already has the intelligence to propose improvements; it just lacks the reliable tools to execute them safely.
 
-Since "spaghetti" - i.e. disorganization - is the issue - we need organizational-tools made available to agents.
+**The vision: systematic improvement through scaffolding.** When agents have deterministic organizational tools, they can:
+1. Execute repetitive organizational tasks cheaply (scripted tools vs. expensive token-by-token reasoning)
+2. Keep codebases clean enough for humans to maintain strategic oversight (preventing cognitive debt)
+3. Systematically improve their own organizational systems over time (like human organizations do)
 
-Imagine an agent which was able to move scripts with diverse static links and dependencies reliably without breaking links and do it deterministically - with pre-written, inexpensive, fast code run locally (free!)?  Well, then that agent would be able to refactor codebases much more freely - potentially brainstorming organizational improvements, testing them out, and measuring the results of their experiments.
+This isn't contingent on better AI models (though those help)—it's about building the deterministic scaffolding layer that's currently missing. Scaffolding is cheap compared to compute; automating organizational tasks that would otherwise require expensive trial-and-error provides immediate ROI.
 
-This is the vision - and notably, we made a big leap there.  How can we conceive of this idea of self-improvement seriously?
-
-We say this, because 1) human organizations do this, 2) agents are already more capable coders than humans, 3) huge amounts of deterministic scaffolding can be built and optimized with time - and thus, this likely improvement is not contingent on the ai agents themselves becoming more capable (although they are, reliably, every 3 months).
-
-Scaffolding is incredibly cheap compared to compute - thus, the best tools are those that automate processes which vibe coding handles slowing and therefore expensively (e.g. refactoring a codebase by trial and error as it moves files, breaks links, reruns, and troubleshoots).
-
-And we are not so naive as to think that others aren't having the same thoughts we are - they are and there are many of them.  And their code is published, open source for us to consider and implement at will.
+**We're not alone in seeing this.** Others are exploring similar ideas, and their code is open source—available for us to learn from and integrate.
 
 ---
 
