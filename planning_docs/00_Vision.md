@@ -4,21 +4,21 @@
 
 ## Core Vision
 
-**Enable agentic coding by building deterministic scaffolding tools.**
+**Enable agentic coding by building refactoring & organizational tools.**
 
-AI agents can reason and generate code, but they need reliable utilities for refactoring, organization, and workflow management. We're building that scaffolding layer—starting with tools that provide immediate value to human developers who are using agents to code.
+AI agents can reason and generate code, but they lack utilities for refactoring, organization, and workflow management. We intend to help develop these utilities - starting with tools that provide immediate measurable value to human developers and agents who are taking on refactoring and organizational tasks.
 
 ---
 
 ## The Problem
 
-AI coding assistants have dramatically increased in capability, enabling "vibe coding" where non-coders describe what they want and AI does the rest. But vibe-coded projects quickly become "spaghetti code"—more noise than signal, effectively unusable.
+AI coding assistants have dramatically increased in capability, enabling "vibe coding" where non-coders describe what they want and AI does the rest. But vibe-coded projects quickly become "spaghetti code" — more noise than signal, effectively unusable.
 
-**The familiar culprit: technical debt.** Developers know this problem well—code that works but is poorly organized, making future changes expensive and risky. Vibe-coded projects accumulate technical debt rapidly because agents excel at generation but lack tools for maintaining clean organization.
+**Start with a familiar experience: the messy shared drive.** Think of an unmanaged shared drive in any organization. Folders created by individuals using their own logic. Files named inconsistently. No clear hierarchy. Outdated documents mixed with current ones. If you tried to learn about the organization by exploring that drive alone—without talking to people for context—you'd fail. The information exists, but it's incohesive and disorganized. Only the person who created each folder knows why it's structured that way.
 
-**The new problem: cognitive debt.** Think of an unmanaged shared drive in any organization. Folders created by individuals using their own logic. Files named inconsistently. No clear hierarchy. Outdated documents mixed with current ones. If you tried to learn about the organization by exploring that drive alone—without talking to people for context—you'd fail. The information exists, but it's incohesive and disorganized. Only the person who created each folder knows why it's structured that way.
+**This is technical debt.** Developers know this problem well—code that works but is poorly organized, making future changes expensive and risky. The shared drive is a perfect analogy: the information is there, but the lack of structure makes it expensive to use. Vibe-coded projects accumulate technical debt rapidly because agents excel at generation but lack tools for maintaining clean organization.
 
-Vibe-coded projects develop the same problem. Each coding session adds structure that made sense to the human at that moment, but as the project grows, the original logic becomes opaque. The codebase becomes a messy shared drive where only the person who was there for each decision has full context—and even they forget over time. AI-generated projects develop faster than humans can learn or remember them. The codebase becomes too complex for the human to fully grasp, undermining their ability to make informed strategic decisions or provide clear direction. Vibe-coding is only as effective as the human's ability to understand what's been built—and that depends on how clean and organized the code remains. **Technical debt compounds cognitive debt.**
+**Technical debt creates cognitive debt.** Vibe-coded projects develop like messy shared drives. Each coding session adds structure that made sense to the human at that moment, but as the project grows, the original logic becomes opaque. The codebase becomes a messy shared drive where only the person who was there for each decision has full context—and even they forget over time. AI-generated projects develop faster than humans can learn or remember them. The codebase becomes too complex for the human to fully grasp, undermining their ability to make informed strategic decisions or provide clear direction. Vibe-coding is only as effective as the human's ability to understand what's been built—and that depends on how clean and organized the code remains.
 
 **The gap isn't agent capability—it's organizational scaffolding.** Current AI agents code at 99th percentile human level, yet they lack the deterministic tools to maintain organization as they build. Many tasks that vibe-coders repeatedly ask agents to do are repetitive enough for automation-via-scripting. This is our opportunity.
 
@@ -81,6 +81,18 @@ Imagine an agent with access to an `auto_move` tool that:
 5. Abandon complex refactors as "too risky"
 
 The scaffolding tool unlocks **systematic experimentation** at near-zero cost.
+
+### The Documentation Virtuous Cycle
+
+Here's a critical insight: **AI is only as effective as our ability to state what we want clearly and provide necessary context.** When documentation is clean, comprehensive, and well-organized, AI can leverage that context to work more effectively. When documentation is sparse or messy, AI struggles.
+
+The breakthrough: **AI dramatically reduces the cost of creating good documentation.** What used to take hours of manual writing can be automated or AI-assisted. This creates a virtuous cycle:
+
+1. Better documentation → AI has better context → AI works more effectively
+2. AI lowers documentation cost → We can maintain better documentation
+3. Better documentation → Higher AI effectiveness → Justifies documentation investment
+
+This is why tools like `auto_doc` aren't just "nice to have"—they're **force multipliers for AI effectiveness itself**. Clean docs unlock AI utility; AI makes clean docs achievable.
 
 ### From One Tool to an Ecosystem
 
