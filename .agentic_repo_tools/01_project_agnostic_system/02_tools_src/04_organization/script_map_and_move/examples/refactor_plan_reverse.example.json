@@ -1,0 +1,20 @@
+{
+  "moves": [
+    {
+      "from": "src/core/math/add.py",
+      "to": "src/math/add.py"
+    },
+    {
+      "from": "src/core/math/multiply.py",
+      "to": "src/math/multiply.py"
+    },
+    {
+      "from": "src/core/math/divide.py",
+      "to": "src/math/divide.py"
+    },
+    {
+      "from": "src/core/utils/format.py",
+      "to": "src/utils/format.py"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "generated": "2025-10-14T18:00:54.271975",
+  "files": {
+    "preflight_check": "scripts/preflight_check.py",
+    "refactor_tool": "scripts/refactor_tool.py",
+    "main": "src/main.py",
+    "add": "src/math/add.py",
+    "divide": "src/math/divide.py",
+    "multiply": "src/math/multiply.py",
+    "format": "src/utils/format.py"
+  }
+}

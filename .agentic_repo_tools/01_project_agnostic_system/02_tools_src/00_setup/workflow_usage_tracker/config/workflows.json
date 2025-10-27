@@ -1,0 +1,47 @@
+{
+  "workflows": {
+    "brainstorming": {
+      "name": "Brainstorming & Architecture",
+      "description": "Systems thinking, design decisions, exploring approaches",
+      "default_agent": "systems-architect",
+      "color": "blue",
+      "icon": "💭"
+    },
+    "planning": {
+      "name": "Planning",
+      "description": "Task breakdown, implementation planning, sprint planning",
+      "default_agent": "planner",
+      "color": "green",
+      "icon": "📋"
+    },
+    "implementation": {
+      "name": "Implementation",
+      "description": "Writing code, building features, active development",
+      "default_agent": "coder",
+      "color": "yellow",
+      "icon": "💻"
+    },
+    "refactoring": {
+      "name": "Refactoring",
+      "description": "Code cleanup, reorganization, optimization",
+      "default_agent": "refactor-specialist",
+      "color": "purple",
+      "icon": "🔧"
+    },
+    "documentation": {
+      "name": "Documentation",
+      "description": "Writing docs, comments, READMEs, explanations",
+      "default_agent": "doc-writer",
+      "color": "cyan",
+      "icon": "📝"
+    },
+    "sprint": {
+      "name": "Sprint (with plan file)",
+      "description": "Structured sprint with plan file and phase tracking",
+      "default_agent": "coder",
+      "color": "magenta",
+      "icon": "🚀",
+      "requires_plan_file": true
+    }
+  }
+}
