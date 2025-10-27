@@ -1,90 +1,244 @@
-# Summary: Agentic Repo Tools Architecture & Workflow
+# Tool Catalog - Agentic Repo Tools
 
-## Key Signal Extraction
+**Purpose:** Canonical inventory of all tools and procedures, organized by process phase. Track integration status, priorities, and development roadmap.
 
-**Core Architecture (Structure Doc)**
-- Reusable toolkit (`.agentic_repo_tools/`) cloneable into any project
-- Binary separation: **01_project_agnostic** (capabilities) vs **02_project_specific** (state/data)
-- Tools organized by functional decomposition (setup → planning → implementation → organization → testing)
-- Procedural docs organized chronologically (execution order), not functionally
-- Knowledge base (02/) uses process-step organization mirroring 01/ structure for intuitive navigation
-
-**Implementation Plan (Workflow Doc)**
-- 5-step bootstrap: structure definition → repo creation → tool cleanup → migration → validation
-- Start with 3 existing tools: logging, auto-move, auto-resize
-- Copy cleaned tools into functional folders under `tools_src/`
-- Create minimal procedural docs post-migration
+**Note:** The term *tools* refers to **deterministic scripts and scaffolding**. *Procedures* refer to **agentic workflows**—reasoning-driven steps that guide planning, implementation, and organization.
 
 ---
 
-## Neutral Review: Uncertainties, Assumptions, Areas for Improvement
+## Integration Status Summary
 
-### Uncertainties
-1. **Chronological vs Functional Tension**: Procedural docs organized chronologically while tools are functional - navigation may be confusing when same tool referenced at multiple workflow stages (NOTE: 02/ now mirrors 01/ structure, reducing this tension)
+### Currently Integrated
+- ⏳ **Logging tool** - Sprint session tracking (Phase 1 - in progress)
 
-### Assumptions
-1. Assumes tools are truly project-agnostic without defining validation criteria
-2. Assumes flat file structure scales adequately before database transition
-3. Assumes chronological organization of procedures is universally better than functional
-4. Assumes three existing tools are representative samples for the full system design
+### Ready for Integration (Phase 2)
+- 🔲 **Auto-move tool** - File organization utility
+- 🔲 **Auto-resize tool** - File splitting utility
 
-### Radical Simplicity Gaps
-1. **Overengineering the Separation**: Two top-level folders with complex internal structures before proving basic utility
-2. **Missing MVP Definition**: No minimal working example or "simplest useful thing" identified (ADDRESSED: MVP.md now defines single tool + procedure scope)
-3. **Procedural Docs Separate from Tools**: Forces users to jump between locations; inline documentation might suffice initially
-
----
-
-## 3 High-Level Clarifying Questions (Systems Design Focused)
-
-1. **What is the atomic unit of value?**
-   - Which single tool + procedure combination would prove this architecture's worth in an actual project? Start there, not with the full system.
-
-2. **What triggers the project-agnostic → project-specific boundary?**
-   - How do tools know when to write to knowledge base vs remain stateless? What's the interface/contract between 01 and 02? (ADDRESSED: Tools use hardcoded relative paths to write to process-step folders in 02/)
-
-3. **How does this differ from package + config?**
-   - Could this be a Python package (tools) + YAML config (procedures) + SQLite (knowledge base) in a standard project structure? What necessitates the custom `.agentic_repo_tools/` architecture?
+### Planned (Post-MVP)
+- 🔲 **Auto-doc tool** - Documentation generator
+- 🔲 **Size linter** - Detect organizational debt
+- 🔲 **Metadata extractor** - Track file metrics
+- 🔲 **README syncer** - Update documentation from metadata
+- 🔲 **Test runner** - Continuous validation wrapper
+- 🔲 **Coverage parser** - Analyze test coverage
+- 🔲 **Semantic linter** - Intelligent organization linting
 
 ---
 
-## Recommended Changes (REVISED)
+## 1. Setup Phase
 
-### Status: Architecture Decisions Made, Ready for Implementation
+**Goal:** Initialize environments, templates, and configurations.
 
-**Key Progress:**
-- Planning framework established (Vision, MVP, Roadmap, Sprint outlines created)
-- Process-step organization chosen (intuitive, pragmatic)
-- Tool/procedure boundary defined (deterministic vs agentic)
-- Tool-to-knowledge-base interface specified (relative paths)
-- Dogfooding approach confirmed (build in this repo first)
+### Tools (Deterministic)
 
-### Remaining Critical Path to MVP
+| Tool | Description | Status |
+|------|-------------|--------|
+| **repo_setup.py** | Initializes `.agentic_repo_tools` structure and configuration templates | Planned |
+| **claude_config_sync.py** | Syncs configuration files with Claude Code environment | Planned |
 
-**1. Complete Planning Documentation** (Sprint 0 completion)
-- Fill in Vision.md (problem, users, value prop)
-- Fill in MVP.md (choose specific tool + procedure, define success criteria)
-- Update Sprint_Planning.md with concrete tasks
+### Procedures (Agentic)
 
-**2. Implement Single Tool End-to-End** (Sprint 1)
-- Select one tool (logging_tool recommended based on agentic_tools_brainstorming.md)
-- Clean and integrate into `.agentic_repo_tools/01_project_agnostic_agentic_system/tools_src/implementation/`
-- Write inline procedural doc (how to use the tool in agentic workflow)
-- Test in this repo, validate output goes to `02/implementation/`
+- Determine project-specific setup requirements and configuration adaptations
 
-**3. Validate Architecture Through Use**
-- Does process-step organization work intuitively?
-- Are relative paths reliable?
-- Is the 01/02 separation actually useful or just overhead?
-- Document lessons learned in Sprint retrospective
+**Next Steps in Phase:**
+- Finalize deterministic setup scripts and confirm compatibility with Claude Code
+- Define procedure templates for configuration adaptation
 
-**4. Decision Gate: Expand or Refine?**
-- If validation successful: add 2nd tool following same pattern
-- If issues found: refactor architecture before expanding
-- DO NOT build infrastructure (installers, orchestration, dashboards) until 3+ tools proven
+---
 
-### What NOT to Do Yet
-- Don't build config system (hardcoded paths work for MVP)
-- Don't create multiple procedural docs (inline with tool for now)
-- Don't populate all of 02/ structure (only implementation/ needed for logging tool)
-- Don't abstract/generalize (learn from concrete examples first)
+## 2. Planning Phase
+
+**Goal:** Define goals, roadmap, MVP, and value increments.
+
+### Tools (Deterministic)
+
+| Tool | Description | Status |
+|------|-------------|--------|
+| TBD | Planning tools to be determined based on procedural requirements | Planned |
+
+### Procedures (Agentic)
+
+- Develop vision and roadmap documents
+- Define MVP and proof of concept
+- Identify increments of value and sprint planning documents
+
+**Next Steps in Phase:**
+- Define structured outputs expected from planning (Vision, Roadmap, MVP)
+- Establish standard prompt templates and metadata schema for planning deliverables
+
+---
+
+## 3. Implementation Phase
+
+**Goal:** Execute agentic coding, logging, and commit management.
+
+### Tools (Deterministic)
+
+| Tool | Description | Status | Dev Repo | Integration Target |
+|------|-------------|--------|----------|-------------------|
+| **logging_tool** | Captures process logs and agentic reasoning metadata | ✅ Built (needs cleanup) | (separate repo) | `01/.../02_tools_src/03_implementation/logging_tool/` |
+| **telemetry_logger.py** | Records performance data and success/failure metrics | Planned | - | - |
+
+**Logging Tool Details:**
+- **Purpose:** Track agentic sprint sessions (time, decisions, blockers)
+- **Type:** Deterministic (bash + Python)
+- **Output:** `02/02_implementation/logs/`
+- **Dogfooding:** Use tool to track its own integration work
+- **Composition:** Standalone, but provides data for analysis tools
+
+### Procedures (Agentic)
+
+- Perform commits after code changes, ensuring context-specific commit messages
+- Guide iterative agentic development and feature creation
+- Manage semantic tagging and maintain clarity across iterations
+
+**Next Steps in Phase:**
+- Design commit-generation procedure, defining metadata (context, purpose, scope)
+- Draft commit style conventions and ensure consistency across repositories
+
+---
+
+## 4. Testing Phase
+
+**Goal:** Validate code and ensure system stability prior to refactoring.
+
+### Tools (Deterministic)
+
+| Tool | Description | Status |
+|------|-------------|--------|
+| **test_runner.py** | Executes repo tests automatically on triggers or timers | Planned |
+| **coverage_parser.py** | Analyzes test coverage and maps it to code components | Planned |
+| **regression_checker.py** | Detects regressions between clean-state versions | Planned |
+
+### Procedures (Agentic)
+
+- Interpret test failures and propose targeted fixes
+- Recommend new tests for coverage gaps
+- Ensure all core functions are validated before structural modifications
+
+**Next Steps in Phase:**
+- Develop standard formats for test output interpretation
+- Define triggers and escalation rules for failed test detection
+- Establish minimal end-to-end test suite to support refactoring operations
+
+---
+
+## 5. Organization and Refactor Phase
+
+**Goal:** Maintain repository structure, documentation, and perform controlled refactors.
+
+### Tools (Deterministic)
+
+| Tool | Description | Status | Dev Repo | Integration Target |
+|------|-------------|--------|----------|-------------------|
+| **auto_move** | Moves files safely, preserving imports and dependencies | ✅ Built (needs cleanup) | (separate repo) | `01/.../02_tools_src/05_organization/auto_move/` |
+| **auto_resize** | Detects and splits oversized files into modular pieces | ✅ Built (needs cleanup) | (separate repo) | `01/.../02_tools_src/05_organization/auto_resize/` |
+| **metadata_extractor.py** | Extracts and maintains file-level metadata (docstrings, line counts) | Planned | - | - |
+| **readme_syncer.py** | Updates README and index files from extracted metadata | Planned | - | - |
+| **semantic_linter.py** | Performs intelligent linting for organization and readability | Planned | - | - |
+
+**Auto-Move Tool Details:**
+- **Purpose:** Safely move files while preserving imports/dependencies
+- **Type:** Deterministic file operations
+- **Composition:** Can chain with size_linter output
+
+**Auto-Resize Tool Details:**
+- **Purpose:** Split oversized files into modular pieces
+- **Type:** Deterministic file operations + optional agent reasoning for split points
+- **Composition:** Can chain with size_linter, then auto-move
+
+**Auto-Doc Tool Details:**
+- **Purpose:** Generate/maintain documentation in sync with code
+- **Type:** Mix of deterministic templates + agent-written summaries
+- **Composition:** Uses metadata_extractor output
+- **Status:** Deferred until post-MVP
+
+### Procedures (Agentic)
+
+- Identify disorganized or redundant code segments
+- Recommend modular refactors and improved file structures
+- Ensure all file moves and renames are Git-tracked with descriptive commit messages
+- Update metadata and knowledge base entries following any structural change
+
+**Next Steps in Phase:**
+- Define criteria for what constitutes disorganized or overly complex file
+- Plan procedures for detecting redundancy and recommending modularization
+- Implement logic for synchronizing Git history with updated metadata
+
+---
+
+## 6. Meta and Cross-Layer Phase
+
+**Goal:** Integrate and analyze data across all functional layers.
+
+### Tools (Deterministic)
+
+| Tool | Description | Status |
+|------|-------------|--------|
+| **repo_analyzer.py** | Builds unified view of repo state across layers | Planned |
+| **data_integrator.py** | Consolidates output from tools into knowledge base | Planned |
+| **visualizer.py** | Generates visual summaries and diagrams of repo evolution | Planned |
+
+### Procedures (Agentic)
+
+- Generate holistic reports of agentic repo performance
+- Recommend optimization strategies and future improvements
+
+**Next Steps in Phase:**
+- Identify cross-phase data relationships and dependencies
+- Outline procedure for generating and maintaining long-term analytics
+
+---
+
+## Tool Prioritization Criteria
+
+1. **Deterministic-first** - Reliable, repeatable execution
+2. **Immediate value** - Useful this week (dogfooding test)
+3. **Composability** - Works well with existing tools
+4. **Trust** - Supports `--dry-run`, reversibility, transparent logging
+
+---
+
+## Integration Log
+
+### 2025-10-26: Planning Complete
+- ✅ Vision, Roadmap, MVP docs finalized
+- ✅ Architecture defined with numbered folder structure (see `.agentic_repo_tools/ARCHITECTURE.md`)
+- ✅ Integration scripts framework created (`03_integration_scripts/`)
+- ✅ Tool composition pattern documented (bash → MCP progression)
+- ✅ Planning docs reorganized (`01_planning_docs/`, `02_progress_tracking/`)
+- ✅ Experimental design framework added to Roadmap
+- ✅ Agentic features backlog merged into `archive/05_Future_Agentic_Orchestration.md`
+
+### Next: Logging Tool Integration (Phase 1)
+- **Target:** `.agentic_repo_tools/01/.../02_tools_src/03_implementation/logging_tool/`
+- **Output:** `02/02_implementation/logs/`
+- **Dogfooding:** Use tool to track its own integration work
+- **Success Criteria:** Tool works, 01/02 structure feels helpful, we actually use it
+
+---
+
+## Cycle Integration
+
+**Goal:** Reinforce the iterative nature of agentic coding.
+
+The system operates in a continuous loop:
+**Setup → Plan → Implement → Test → Organize/Refactor → Reflect → Repeat**
+
+Each cycle reinforces:
+- Structural integrity
+- Agentic understanding
+- Documentation coherence
+
+Future phases will introduce metrics-driven triggers for self-maintaining cycles (see Phase 4 experimental design in Roadmap).
+
+---
+
+## Notes
+
+- **Each tool must provide standalone value before integration** (not just theoretical utility)
+- **Tools developed in separate repos maintain their own MVPs** (this repo integrates, doesn't develop)
+- **Integration validates architecture, not tool functionality** (tools should already work)
+- **Living document:** Update status markers as tools are integrated
+- **Tool/procedure boundary:** Deterministic = cheap/fast/reliable; Agentic = expensive/reasoning/generation
