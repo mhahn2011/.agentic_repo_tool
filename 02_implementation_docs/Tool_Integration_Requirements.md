@@ -180,17 +180,71 @@ This provides flexibility while maintaining sensible defaults.
 
 ## Phase Classification
 
-Determine which phase your tool belongs to:
+Determine which phase your tool belongs to based on **when and how it's used**, not what it processes or logs about.
 
 | Phase | Number | Purpose | Example Tools |
 |-------|--------|---------|---------------|
-| Setup | `00_setup` | Configuration, environment initialization | config_manager, env_checker |
-| Planning | `01_planning` | MVP definition, sprint planning | sprint_planner, task_estimator |
-| Implementation | `02_implementation` | Coding, commits, session tracking | logging_tool, commit_analyzer |
+| Setup | `00_setup` | Session initialization, cross-phase infrastructure, environment preparation | logging_tool, config_manager, env_checker |
+| Planning | `01_planning` | MVP definition, sprint planning, task breakdown | sprint_planner, task_estimator |
+| Implementation | `02_implementation` | Active coding, commits, code generation | commit_analyzer, code_formatter |
 | Testing | `03_testing` | Validation, coverage, regression | test_runner, coverage_analyzer |
 | Organization | `04_organization` | Refactoring, documentation, file management | auto_move, auto_resize, auto_doc |
 
-**If unsure:** Ask yourself "When in the development cycle would I naturally use this tool?" The answer suggests the phase.
+### How to Classify Your Tool
+
+**Ask yourself: "When would a developer invoke this tool during their workflow?"**
+
+Not: "What does this tool process or analyze?"
+
+#### Example: Logging Tool
+
+**Wrong reasoning:** "It logs implementation work → goes in `02_implementation/`"
+
+**Correct reasoning:**
+- Developer launches it ONCE at session start
+- It runs across ALL phases (planning → implementation → testing → organization)
+- It's preparatory infrastructure, not a phase-specific activity
+- **Therefore:** Goes in `00_setup/` (launched during setup, supports all phases)
+
+#### Example: Code Formatter
+
+**Reasoning:**
+- Developer invokes it DURING active coding
+- Specific to implementation work
+- Not cross-phase infrastructure
+- **Therefore:** Goes in `02_implementation/`
+
+#### Example: Test Runner
+
+**Reasoning:**
+- Developer invokes it during testing/validation
+- Specific to testing phase workflow
+- **Therefore:** Goes in `03_testing/`
+
+### Decision Process
+
+1. **Identify usage pattern:** When does the developer invoke this tool?
+   - At session start? → Likely `00_setup/`
+   - During active coding? → Likely `02_implementation/`
+   - During validation? → Likely `03_testing/`
+   - During cleanup/refactoring? → Likely `04_organization/`
+
+2. **Consider cross-phase nature:** Does it support multiple phases?
+   - Yes, runs across all phases → `00_setup/` (infrastructure)
+   - No, specific to one activity → That phase's folder
+
+3. **Consult with human developers:** Phase classification should be determined WITH input from the developers who will use the tool. They know the natural workflow.
+
+4. **Document your reasoning:** In your tool's README, explain why it belongs in its chosen phase.
+
+### If Still Unsure
+
+**Discuss with the integration team.** Phase placement affects:
+- Where users look for the tool
+- Mental model of the workflow
+- Output organization
+
+Getting it right improves usability and discoverability.
 
 ---
 
@@ -318,6 +372,14 @@ pyyaml==6.0
 
 ## Example: Logging Tool
 
+The logging tool is a **cross-phase infrastructure tool** that captures work across planning, implementation, testing, and organization phases.
+
+**Phase classification reasoning:**
+- Launched ONCE at session start (not repeatedly during implementation)
+- Runs continuously across all workflow phases
+- Preparatory infrastructure, not phase-specific activity
+- **Placement:** `00_setup/` (where session initialization happens)
+
 ### Structure in Dev Repo
 
 ```
@@ -348,7 +410,7 @@ logging_tool_repo/
 .agentic_repo_tools/
 ├── 01_project_agnostic_system/
 │   └── 02_tools_src/
-│       └── 02_implementation/
+│       └── 00_setup/                      # Setup phase (session initialization)
 │           └── logging_tool/              # Copied from dev repo
 │               ├── README.md
 │               ├── cli/
@@ -358,15 +420,16 @@ logging_tool_repo/
 │               └── config/
 │
 └── 02_project_specific_outputs/
-    └── 02_implementation/
+    └── 00_setup/                          # Mirrors phase from 01/
         └── logging_tool/                  # Mirrors tool name from 01/
             ├── session_2025-10-27.json   # Created by tool at runtime
             └── statistics.json
 ```
 
-**Key observation:** The structure mirrors perfectly:
-- Tool location: `01/.../02_implementation/logging_tool/`
-- Output location: `02/.../02_implementation/logging_tool/`
+**Key observations:**
+- The structure mirrors perfectly: `01/.../00_setup/logging_tool/` → `02/.../00_setup/logging_tool/`
+- Even though it logs work from all phases, outputs live in `00_setup/` because that's where the tool is invoked
+- Session logs are "infrastructure outputs" not "implementation outputs"
 
 ### Relative Path Implementation
 
@@ -375,13 +438,28 @@ logging_tool_repo/
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TOOL_NAME="logging_tool"  # Matches the tool's directory name
-LOG_OUTPUT="${SCRIPT_DIR}/../../../../../02_project_specific_outputs/02_implementation/${TOOL_NAME}"
+LOG_OUTPUT="${SCRIPT_DIR}/../../../../../02_project_specific_outputs/00_setup/${TOOL_NAME}"
 
 mkdir -p "$LOG_OUTPUT"
 python3 ../src/session_tracker.py --output "$LOG_OUTPUT"
 ```
 
 **Result:** Works regardless of where the entire `.agentic_repo_tools/` directory is located.
+
+**Developer workflow:**
+```bash
+# 1. Start session (setup phase)
+.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/logging_tool/cli/launch_sprint_session.sh
+
+# 2. Work through phases (logging captures all of it)
+# - Planning
+# - Implementation
+# - Testing
+# - Organization
+
+# 3. View session logs
+cat .agentic_repo_tools/02_project_specific_outputs/00_setup/logging_tool/session_2025-10-27.json
+```
 
 ---
 
