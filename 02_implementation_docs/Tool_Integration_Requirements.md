@@ -44,35 +44,102 @@ The entire toolkit is built on a fundamental separation:
 
 ## Directory Structure for Tool Development
 
-### In Your Tool's Development Repo
+### Important Context: Separate Development for Integration
 
-Structure your tool repo to match its final integration destination:
+**Your tool is being developed in a separate repository for later integration into the main `.agentic_repo_tools/` repository.**
+
+To ensure smooth integration:
+1. Mirror the `.agentic_repo_tools/` structure in your dev repo
+2. Develop and test within that mirrored structure
+3. If it works in your dev repo, it will copy cleanly into the integration repo
+
+**No path translation needed** - What works locally will work after integration.
+
+### Recommended Dev Repo Structure
 
 ```
 your_tool_repo/
-├── README.md                    # Tool documentation
-├── requirements.txt             # Dependencies (Python)
-│                                # OR package.json (Node)
-│                                # OR relevant dependency file
+├── README.md                              # Tool documentation
+├── requirements.txt                       # Dependencies (Python)
+│                                          # OR package.json (Node)
+│                                          # OR relevant dependency file
 │
-├── [tool_name]/                 # Main tool directory
-│   ├── cli/                     # Command-line interfaces
-│   ├── core/                    # Core functionality
-│   ├── config/                  # Default configs (if needed)
-│   └── [other modules]/
+├── .agentic_repo_tools/                   # MIRROR the integration structure
+│   ├── 01_project_agnostic_system/
+│   │   └── 02_tools_src/
+│   │       └── [phase]/                   # Your tool's phase (00-04)
+│   │           └── [tool_name]/           # Your tool's source code
+│   │               ├── cli/               # Command-line interfaces
+│   │               ├── src/               # Core functionality
+│   │               └── config/            # Default configs (if needed)
+│   │
+│   └── 02_project_specific_outputs/
+│       └── [phase]/                       # Same phase as above
+│           └── [tool_name]/               # Tool outputs (created at runtime)
 │
-└── tests/                       # Tool tests (optional but recommended)
+├── tests/                                 # Tool tests (outside .agentic_repo_tools)
+└── docs/                                  # Additional docs (outside .agentic_repo_tools)
 ```
 
-**Key principle:** Keep your tool's source code organized in a way that can be copied directly into the integration structure.
+### Why This Structure?
+
+**✅ Benefits:**
+- Test with realistic paths (exactly as they'll be post-integration)
+- Copy-paste integration (no path adjustments needed)
+- Clear separation between dev artifacts and integration artifacts
+- Outputs work correctly during development
+
+**📁 What goes inside `.agentic_repo_tools/`:**
+- Tool source code (will be integrated)
+- Tool outputs (generated during testing)
+
+**📁 What stays outside `.agentic_repo_tools/`:**
+- README, requirements.txt, package.json (dev repo documentation)
+- tests/ (tool testing code)
+- docs/ (additional documentation)
+- .git/ (version control for dev repo)
+
+### Example: Logging Tool Dev Repo
+
+```
+logging_tool_repo/
+├── README.md                              # Describes the tool, how to develop it
+├── requirements.txt                       # Python dependencies
+│
+├── .agentic_repo_tools/                   # Mirrored integration structure
+│   ├── 01_project_agnostic_system/
+│   │   └── 02_tools_src/
+│   │       └── 00_setup/                  # Setup phase
+│   │           └── logging_tool/          # Tool source
+│   │               ├── cli/
+│   │               │   ├── launch_sprint_session.sh
+│   │               │   └── view_sprint_statistics.sh
+│   │               ├── src/
+│   │               │   ├── session_tracker.py
+│   │               │   ├── statistics.py
+│   │               │   └── utils.py
+│   │               └── config/
+│   │                   └── default_config.yaml
+│   │
+│   └── 02_project_specific_outputs/
+│       └── 00_setup/                      # Mirrors phase
+│           └── logging_tool/              # Mirrors tool name
+│               └── (outputs created here during testing)
+│
+└── tests/
+    ├── test_session_tracker.py
+    └── test_statistics.py
+```
+
+**Key principle:** The entire `.agentic_repo_tools/` folder in your dev repo will be copied to the integration repo during integration.
 
 ---
 
 ## Integration Destination Paths
 
-### Where Your Tool Will Live
+### Where Your Tool Will Live (After Integration)
 
-After integration, your tool will be copied to:
+When your dev repo's `.agentic_repo_tools/` folder is copied to the integration repo, the structure remains identical:
 
 ```
 .agentic_repo_tools/
@@ -380,56 +447,31 @@ The logging tool is a **cross-phase infrastructure tool** that captures work acr
 - Preparatory infrastructure, not phase-specific activity
 - **Placement:** `00_setup/` (where session initialization happens)
 
-### Structure in Dev Repo
+**See earlier section "Example: Logging Tool Dev Repo" for complete dev repo structure.**
 
-```
-logging_tool_repo/
-├── README.md
-├── requirements.txt
-│
-├── logging_tool/
-│   ├── cli/
-│   │   ├── launch_sprint_session.sh
-│   │   └── view_sprint_statistics.sh
-│   │
-│   ├── src/
-│   │   ├── session_tracker.py
-│   │   ├── statistics.py
-│   │   └── utils.py
-│   │
-│   └── config/
-│       └── default_config.yaml
-│
-└── tests/
-    └── test_session_tracker.py
-```
+### Key Observations After Integration
 
-### After Integration
+The structure remains identical to what you built in your dev repo:
 
 ```
 .agentic_repo_tools/
 ├── 01_project_agnostic_system/
 │   └── 02_tools_src/
-│       └── 00_setup/                      # Setup phase (session initialization)
-│           └── logging_tool/              # Copied from dev repo
-│               ├── README.md
-│               ├── cli/
-│               │   ├── launch_sprint_session.sh
-│               │   └── view_sprint_statistics.sh
-│               ├── src/
-│               └── config/
+│       └── 00_setup/
+│           └── logging_tool/              # Same structure as dev repo
 │
 └── 02_project_specific_outputs/
-    └── 00_setup/                          # Mirrors phase from 01/
-        └── logging_tool/                  # Mirrors tool name from 01/
+    └── 00_setup/
+        └── logging_tool/                  # Mirrors tool name
             ├── session_2025-10-27.json   # Created by tool at runtime
             └── statistics.json
 ```
 
-**Key observations:**
+**Key points:**
 - The structure mirrors perfectly: `01/.../00_setup/logging_tool/` → `02/.../00_setup/logging_tool/`
 - Even though it logs work from all phases, outputs live in `00_setup/` because that's where the tool is invoked
 - Session logs are "infrastructure outputs" not "implementation outputs"
+- **No changes needed after copying from dev repo** - paths work identically
 
 ### Relative Path Implementation
 
@@ -504,36 +546,75 @@ if not shutil.which('jq'):
 
 ## Integration Process
 
-Once your tool meets these requirements:
+### When Your Tool is Ready
 
-1. **Notify integration team** that tool is ready
-2. **Provide repository link** and integration phase
+Once your tool meets these requirements and works correctly in your dev repo:
+
+1. **Verify checklist completion:**
+   - [ ] Tool works within `.agentic_repo_tools/` structure in dev repo
+   - [ ] Outputs correctly to `02_project_specific_outputs/[phase]/[tool_name]/`
+   - [ ] All dependencies documented
+   - [ ] README complete with phase classification reasoning
+   - [ ] Tests passing
+
+2. **Notify integration team:**
+   - Provide repository link
+   - Specify tool name and phase classification
+   - Confirm mirrored structure is in place
+
 3. **Integration team will:**
-   - Review against this checklist
-   - Copy tool to appropriate phase folder
-   - Test from integration location
+   - Review tool against integration checklist
+   - Copy `.agentic_repo_tools/` folder from your dev repo to integration repo
+   - Test tool from integration repo location
    - Document any issues or required adjustments
-4. **Address feedback** if needed
+
+4. **Address feedback** (if needed)
+
 5. **Tool is integrated** and available for use
+
+### Integration Command (Example)
+
+From the integration repo:
+
+```bash
+# Copy tool from dev repo to integration repo
+cp -r /path/to/your_tool_repo/.agentic_repo_tools/* ./.agentic_repo_tools/
+
+# Test tool from integration location
+./.agentic_repo_tools/01_project_agnostic_system/02_tools_src/[phase]/[tool_name]/cli/main_script.sh
+
+# Verify outputs
+ls ./.agentic_repo_tools/02_project_specific_outputs/[phase]/[tool_name]/
+```
+
+**That's it!** Because you built with the mirrored structure, integration is a simple copy operation.
 
 ---
 
 ## Questions?
 
-- **Where should my tool go?** → See "Phase Classification" section
+- **Do I build inside `.agentic_repo_tools/` in my dev repo?** → Yes! Mirror the integration structure. If it works there, it works after integration.
+- **Where does my tool's README go?** → Two places: 1) Root of dev repo (for developers), 2) Inside tool folder in `.agentic_repo_tools/01/.../[tool_name]/` (for users)
+- **Where should my tool go?** → See "Phase Classification" section - based on when it's invoked, not what it processes
 - **How do I handle config files?** → Include defaults in `config/`, allow environment variable overrides
 - **Can my tool depend on other tools?** → Yes, but document the dependency clearly
 - **What if I need external services?** → Document as optional dependency, provide graceful fallback
+- **How do I test if paths are correct?** → Run your tool from within `.agentic_repo_tools/01/.../[tool_name]/` in your dev repo. Check that outputs appear in `.agentic_repo_tools/02/.../[tool_name]/`
 
 ---
 
 ## Summary
 
 **The Golden Rules:**
-1. Use relative paths for all outputs
-2. Write to `02_project_specific_outputs/[phase]/[tool_name]/` (mirrors tool location in 01/)
-3. Document everything (inputs, outputs, dependencies)
-4. Test from the expected integration location
-5. Make no assumptions about absolute paths or working directory
+1. **Mirror the integration structure** - Build inside `.agentic_repo_tools/` in your dev repo
+2. **Use relative paths** - From tool location to outputs
+3. **Mirror tool names** - Write to `02_project_specific_outputs/[phase]/[tool_name]/`
+4. **Test in dev repo** - If it works there, it works after integration
+5. **Document everything** - Inputs, outputs, dependencies, phase classification reasoning
+6. **No path translation needed** - Copy-paste integration
 
-Follow these guidelines and integration will be smooth, predictable, and maintainable.
+**If you follow these guidelines:**
+- Integration is a simple copy operation
+- No path adjustments needed
+- Works identically in dev and integration repos
+- Smooth, predictable, and maintainable
