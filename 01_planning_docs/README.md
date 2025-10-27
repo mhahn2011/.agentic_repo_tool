@@ -6,17 +6,17 @@ This folder contains strategic and operational planning for the integration repo
 
 ## Document Structure
 
+### Operational (Start Here)
+- **[00_Immediate_To_Do.md](00_Immediate_To_Do.md)** - What to do right now (operational scratchpad)
+
 ### Strategic Planning
 - **[00_Vision.md](00_Vision.md)** - Problem, opportunity, foundational principles, and overall approach
-- **[01_Roadmap.md](01_Roadmap.md)** - Phased implementation plan with decision gates
-- **[02_MVP.md](02_MVP.md)** - Minimum viable product scope and success criteria
+- **[01_Roadmap.md](01_Roadmap.md)** - 4 pragmatic phases with decision gates
+- **[02_MVP.md](02_MVP.md)** - First tool validation scope and success criteria
 
-### Operational Planning
-- **[03_Tool_Catalog.md](03_Tool_Catalog.md)** - Tool inventory, priorities, and integration status
-- **[04_Next_Steps.md](04_Next_Steps.md)** - Scratchpad for current state and immediate next actions
-
-### Reference Material
-- **[archive/](archive/)** - Research artifacts and brainstorming docs (historical reference)
+### Reference & Inventory
+- **[03_Tool_Catalog.md](03_Tool_Catalog.md)** - Comprehensive tool inventory by phase + deterministic backlog
+- **[04_Future_Agentic_Orchestration.md](04_Future_Agentic_Orchestration.md)** - Phase 4 experimental designs + agentic feature backlog
 - **[../.agentic_repo_tools/ARCHITECTURE.md](../.agentic_repo_tools/ARCHITECTURE.md)** - Technical architecture of the toolkit
 
 ---
@@ -24,19 +24,22 @@ This folder contains strategic and operational planning for the integration repo
 ## How to Use These Docs
 
 **Starting a work session?**
-→ Read `04_Next_Steps.md` to see where you left off
+→ Read `00_Immediate_To_Do.md` to see where you left off
 
 **Need to understand the big picture?**
 → Read `00_Vision.md` for strategic context
 
 **Planning next phase?**
-→ Check `01_Roadmap.md` for implementation plan
+→ Check `01_Roadmap.md` for 4-phase implementation plan
 
-**Validating progress?**
+**Validating Phase 1 progress?**
 → Review `02_MVP.md` success criteria
 
-**Checking tool status?**
-→ See `03_Tool_Catalog.md` for integration tracking
+**Looking up tool details?**
+→ See `03_Tool_Catalog.md` for comprehensive inventory
+
+**Planning Phase 4 experiments?**
+→ See `04_Future_Agentic_Orchestration.md` for experimental designs
 
 ---
 
