@@ -11,7 +11,7 @@
 Before submitting a tool for integration, verify:
 
 - [ ] No hardcoded absolute paths
-- [ ] Outputs write to relative paths: `../../02_project_specific_outputs/[phase]/`
+- [ ] Outputs write to relative paths: `../../02_project_specific_outputs/[phase]/[tool_name]/`
 - [ ] Core functionality in organized directory structure
 - [ ] README documents inputs, outputs, and dependencies
 - [ ] Dependencies documented (requirements.txt, package.json, etc.)
@@ -85,16 +85,29 @@ After integration, your tool will be copied to:
 │       └── 04_organization/[tool_name]/    # Organization phase tools
 │
 └── 02_project_specific_outputs/
-    ├── 00_setup/                # Setup tool outputs
-    ├── 01_planning/             # Planning tool outputs
-    ├── 02_implementation/       # Implementation tool outputs (e.g., logs/)
-    ├── 03_testing/              # Testing tool outputs
-    └── 04_organization/         # Organization tool outputs (e.g., move_logs/)
+    ├── 00_setup/
+    │   └── [tool_name]/         # Each tool gets its own output folder
+    ├── 01_planning/
+    │   └── [tool_name]/
+    ├── 02_implementation/
+    │   └── [tool_name]/         # e.g., logging_tool/
+    ├── 03_testing/
+    │   └── [tool_name]/
+    └── 04_organization/
+        └── [tool_name]/         # e.g., auto_move/, auto_resize/
 ```
+
+**Key principle:** The directory structure mirrors between 01/ and 02/. Each tool in 01/ has a corresponding output folder in 02/.
 
 **Example:**
 - A logging tool lives at: `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/02_implementation/logging_tool/`
-- Its outputs go to: `.agentic_repo_tools/02_project_specific_outputs/02_implementation/logs/`
+- Its outputs go to: `.agentic_repo_tools/02_project_specific_outputs/02_implementation/logging_tool/`
+
+**Benefits of this mirroring:**
+- Clear ownership: Immediately see which tool created which outputs
+- Multiple tools per phase: No naming conflicts
+- Easy cleanup: Delete tool folder from both 01/ and 02/
+- Clear traceability: 1:1 correspondence between tools and outputs
 
 ---
 
@@ -109,31 +122,44 @@ Your tool should write outputs using relative paths from its location:
 import os
 from pathlib import Path
 
-# Relative path from tool location to outputs
+# Relative path from tool location to its output folder
+# Tool is at: 01_project_agnostic_system/02_tools_src/[phase]/[tool_name]/
+# Output goes to: 02_project_specific_outputs/[phase]/[tool_name]/
 OUTPUT_BASE = Path(__file__).parent / ".." / ".." / ".." / ".." / ".." / "02_project_specific_outputs"
-LOG_DIR = OUTPUT_BASE / "02_implementation" / "logs"
+TOOL_OUTPUT_DIR = OUTPUT_BASE / "02_implementation" / "logging_tool"
+
+# Create output directory
+TOOL_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+# Write outputs
+log_file = TOOL_OUTPUT_DIR / "session.json"
 
 # Or with environment variable override
 OUTPUT_BASE = Path(os.getenv('AGENTIC_OUTPUTS_DIR',
                              '../../../../02_project_specific_outputs'))
+TOOL_OUTPUT_DIR = OUTPUT_BASE / "02_implementation" / "logging_tool"
 ```
 
 **Bash example:**
 ```bash
 #!/bin/bash
-# Relative path from tool script to outputs
+# Relative path from tool script to its output folder
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUTPUT_DIR="${SCRIPT_DIR}/../../../../02_project_specific_outputs/02_implementation/logs"
+TOOL_NAME="logging_tool"  # Should match your tool's directory name
+OUTPUT_DIR="${SCRIPT_DIR}/../../../../02_project_specific_outputs/02_implementation/${TOOL_NAME}"
 
 mkdir -p "$OUTPUT_DIR"
 echo "Writing to: $OUTPUT_DIR"
+
+# Write outputs
+echo '{"session": "data"}' > "${OUTPUT_DIR}/session.json"
 ```
 
 ### ❌ DON'T: Use Hardcoded Absolute Paths
 
 ```python
 # BAD - hardcoded absolute path
-LOG_DIR = "/Users/yourname/project/.agentic_repo_tools/02_project_specific_outputs/logs/"
+LOG_DIR = "/Users/yourname/project/.agentic_repo_tools/02_project_specific_outputs/logging_tool/"
 
 # BAD - assumes specific drive or location
 LOG_DIR = "C:/Projects/my_project/.agentic_repo_tools/..."
@@ -145,7 +171,7 @@ Allow users to override output locations via environment variables:
 
 ```python
 OUTPUT_DIR = os.getenv('LOGGING_OUTPUT_DIR',
-                       '../../02_project_specific_outputs/02_implementation/logs/')
+                       '../../../../02_project_specific_outputs/02_implementation/logging_tool/')
 ```
 
 This provides flexibility while maintaining sensible defaults.
@@ -275,8 +301,8 @@ pyyaml==6.0
    cd test_project/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/[phase]/your_tool/
    ./tool_script.sh
 
-   # Verify outputs in correct location
-   ls test_project/.agentic_repo_tools/02_project_specific_outputs/[phase]/
+   # Verify outputs in correct location (should mirror tool name)
+   ls test_project/.agentic_repo_tools/02_project_specific_outputs/[phase]/your_tool/
    ```
 
 3. **Verify cleanup:**
@@ -333,10 +359,14 @@ logging_tool_repo/
 │
 └── 02_project_specific_outputs/
     └── 02_implementation/
-        └── logs/                          # Created by tool at runtime
-            ├── session_2025-10-27.json
+        └── logging_tool/                  # Mirrors tool name from 01/
+            ├── session_2025-10-27.json   # Created by tool at runtime
             └── statistics.json
 ```
+
+**Key observation:** The structure mirrors perfectly:
+- Tool location: `01/.../02_implementation/logging_tool/`
+- Output location: `02/.../02_implementation/logging_tool/`
 
 ### Relative Path Implementation
 
@@ -344,7 +374,8 @@ logging_tool_repo/
 ```bash
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_OUTPUT="${SCRIPT_DIR}/../../../../../02_project_specific_outputs/02_implementation/logs"
+TOOL_NAME="logging_tool"  # Matches the tool's directory name
+LOG_OUTPUT="${SCRIPT_DIR}/../../../../../02_project_specific_outputs/02_implementation/${TOOL_NAME}"
 
 mkdir -p "$LOG_OUTPUT"
 python3 ../src/session_tracker.py --output "$LOG_OUTPUT"
@@ -359,7 +390,7 @@ python3 ../src/session_tracker.py --output "$LOG_OUTPUT"
 ### ❌ Hardcoding Paths
 ```python
 # DON'T
-LOG_FILE = "/Users/michael/.agentic_repo_tools/02_project_specific_outputs/logs/session.json"
+LOG_FILE = "/Users/michael/.agentic_repo_tools/02_project_specific_outputs/logging_tool/session.json"
 ```
 
 ### ❌ Assuming Current Working Directory
@@ -422,7 +453,7 @@ Once your tool meets these requirements:
 
 **The Golden Rules:**
 1. Use relative paths for all outputs
-2. Write to `02_project_specific_outputs/[phase]/`
+2. Write to `02_project_specific_outputs/[phase]/[tool_name]/` (mirrors tool location in 01/)
 3. Document everything (inputs, outputs, dependencies)
 4. Test from the expected integration location
 5. Make no assumptions about absolute paths or working directory
