@@ -1,5 +1,5 @@
-# Project-specific outputs (generated data)
-.agentic_repo_tools/02_project_specific_outputs/
+# Project-specific data (inputs, outputs, configs, artifacts)
+.agentic_repo_tools/02_project_specific_data/
 
 # Python
 __pycache__/

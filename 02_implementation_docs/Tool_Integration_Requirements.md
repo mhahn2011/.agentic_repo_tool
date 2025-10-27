@@ -11,7 +11,7 @@
 Before submitting a tool for integration, verify:
 
 - [ ] No hardcoded absolute paths
-- [ ] Outputs write to relative paths: `../../02_project_specific_outputs/[phase]/[tool_name]/`
+- [ ] Outputs write to relative paths: `../../02_project_specific_data/[phase]/[tool_name]/`
 - [ ] Core functionality in organized directory structure
 - [ ] README documents inputs, outputs, and dependencies
 - [ ] Dependencies documented (requirements.txt, package.json, etc.)
@@ -28,17 +28,45 @@ The entire toolkit is built on a fundamental separation:
 **01 = Capabilities** (stable, version-controlled, distributable)
 - Tool source code
 - Scripts and utilities
+- **Default configurations only** (not project-specific)
 - Reusable across all projects
 
-**02 = State** (generated, gitignored, project-specific)
-- Logs and reports
-- Metrics and metadata
-- Temporary files and outputs
+**02 = Project-Specific Data** (inputs, outputs, configs, gitignored)
+- **User-created inputs:** Refactor plans, project-specific configs
+- **Tool-generated outputs:** Logs, reports, execution history
+- **Metrics and metadata:** Project-specific measurements
+- **Temporary files:** Session state, cache data
 
 **Why this matters:**
-- Users can delete `02/` without losing functionality
+- Users can delete `02/` without losing functionality (regeneratable)
 - `01/` can be version controlled and updated cleanly
-- Multiple projects can share the same `01/` with different `02/` states
+- Multiple projects can share the same `01/` with different `02/` data
+- **Everything project-specific goes in `02/`** - even user-created inputs
+
+### What Goes Where?
+
+**✅ Goes in `01/` (tool's config/ folder):**
+- Default configurations that work across projects
+- Example: `default_config.yaml`, `template.json`
+- These are starting points, not project-specific
+
+**✅ Goes in `02/` (project-specific data folder):**
+- User-created project-specific configs: `my_project_config.yaml`
+- User-created input files: `refactor_plan.json`, `move_plan.json`
+- Tool-generated outputs: `execution_log.json`, `session_history.json`
+- Project-specific measurements: `metrics.json`, `coverage_report.html`
+
+**Example: Auto-Move Tool**
+```
+01/.../04_organization/auto_move/
+├── config/
+│   └── default_config.yaml        # Default settings (agnostic)
+
+02/.../04_organization/auto_move/
+├── refactor_plan.json              # User creates (INPUT, project-specific)
+├── move_history.json               # Tool generates (OUTPUT)
+└── last_execution.json             # Tool generates (OUTPUT)
+```
 
 ---
 
@@ -73,7 +101,7 @@ your_tool_repo/
 │   │               ├── src/               # Core functionality
 │   │               └── config/            # Default configs (if needed)
 │   │
-│   └── 02_project_specific_outputs/
+│   └── 02_project_specific_data/
 │       └── [phase]/                       # Same phase as above
 │           └── [tool_name]/               # Tool outputs (created at runtime)
 │
@@ -121,7 +149,7 @@ logging_tool_repo/
 │   │               └── config/
 │   │                   └── default_config.yaml
 │   │
-│   └── 02_project_specific_outputs/
+│   └── 02_project_specific_data/
 │       └── 00_setup/                      # Mirrors phase
 │           └── logging_tool/              # Mirrors tool name
 │               └── (outputs created here during testing)
@@ -151,7 +179,7 @@ When your dev repo's `.agentic_repo_tools/` folder is copied to the integration 
 │       ├── 03_testing/[tool_name]/         # Testing phase tools
 │       └── 04_organization/[tool_name]/    # Organization phase tools
 │
-└── 02_project_specific_outputs/
+└── 02_project_specific_data/
     ├── 00_setup/
     │   └── [tool_name]/         # Each tool gets its own output folder
     ├── 01_planning/
@@ -168,7 +196,7 @@ When your dev repo's `.agentic_repo_tools/` folder is copied to the integration 
 
 **Example:**
 - A logging tool lives at: `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/02_implementation/logging_tool/`
-- Its outputs go to: `.agentic_repo_tools/02_project_specific_outputs/02_implementation/logging_tool/`
+- Its outputs go to: `.agentic_repo_tools/02_project_specific_data/02_implementation/logging_tool/`
 
 **Benefits of this mirroring:**
 - Clear ownership: Immediately see which tool created which outputs
@@ -191,8 +219,8 @@ from pathlib import Path
 
 # Relative path from tool location to its output folder
 # Tool is at: 01_project_agnostic_system/02_tools_src/[phase]/[tool_name]/
-# Output goes to: 02_project_specific_outputs/[phase]/[tool_name]/
-OUTPUT_BASE = Path(__file__).parent / ".." / ".." / ".." / ".." / ".." / "02_project_specific_outputs"
+# Output goes to: 02_project_specific_data/[phase]/[tool_name]/
+OUTPUT_BASE = Path(__file__).parent / ".." / ".." / ".." / ".." / ".." / "02_project_specific_data"
 TOOL_OUTPUT_DIR = OUTPUT_BASE / "02_implementation" / "logging_tool"
 
 # Create output directory
@@ -203,7 +231,7 @@ log_file = TOOL_OUTPUT_DIR / "session.json"
 
 # Or with environment variable override
 OUTPUT_BASE = Path(os.getenv('AGENTIC_OUTPUTS_DIR',
-                             '../../../../02_project_specific_outputs'))
+                             '../../../../02_project_specific_data'))
 TOOL_OUTPUT_DIR = OUTPUT_BASE / "02_implementation" / "logging_tool"
 ```
 
@@ -213,7 +241,7 @@ TOOL_OUTPUT_DIR = OUTPUT_BASE / "02_implementation" / "logging_tool"
 # Relative path from tool script to its output folder
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TOOL_NAME="logging_tool"  # Should match your tool's directory name
-OUTPUT_DIR="${SCRIPT_DIR}/../../../../02_project_specific_outputs/02_implementation/${TOOL_NAME}"
+OUTPUT_DIR="${SCRIPT_DIR}/../../../../02_project_specific_data/02_implementation/${TOOL_NAME}"
 
 mkdir -p "$OUTPUT_DIR"
 echo "Writing to: $OUTPUT_DIR"
@@ -226,7 +254,7 @@ echo '{"session": "data"}' > "${OUTPUT_DIR}/session.json"
 
 ```python
 # BAD - hardcoded absolute path
-LOG_DIR = "/Users/yourname/project/.agentic_repo_tools/02_project_specific_outputs/logging_tool/"
+LOG_DIR = "/Users/yourname/project/.agentic_repo_tools/02_project_specific_data/logging_tool/"
 
 # BAD - assumes specific drive or location
 LOG_DIR = "C:/Projects/my_project/.agentic_repo_tools/..."
@@ -238,7 +266,7 @@ Allow users to override output locations via environment variables:
 
 ```python
 OUTPUT_DIR = os.getenv('LOGGING_OUTPUT_DIR',
-                       '../../../../02_project_specific_outputs/02_implementation/logging_tool/')
+                       '../../../../02_project_specific_data/02_implementation/logging_tool/')
 ```
 
 This provides flexibility while maintaining sensible defaults.
@@ -413,7 +441,7 @@ pyyaml==6.0
    ```bash
    # Create test project structure
    mkdir -p test_project/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/[phase]/
-   mkdir -p test_project/.agentic_repo_tools/02_project_specific_outputs/[phase]/
+   mkdir -p test_project/.agentic_repo_tools/02_project_specific_data/[phase]/
 
    # Copy your tool
    cp -r your_tool test_project/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/[phase]/
@@ -423,13 +451,13 @@ pyyaml==6.0
    ./tool_script.sh
 
    # Verify outputs in correct location (should mirror tool name)
-   ls test_project/.agentic_repo_tools/02_project_specific_outputs/[phase]/your_tool/
+   ls test_project/.agentic_repo_tools/02_project_specific_data/[phase]/your_tool/
    ```
 
 3. **Verify cleanup:**
    ```bash
    # Delete outputs
-   rm -rf test_project/.agentic_repo_tools/02_project_specific_outputs/
+   rm -rf test_project/.agentic_repo_tools/02_project_specific_data/
 
    # Tool should still run without errors
    ./tool_script.sh
@@ -460,7 +488,7 @@ The structure remains identical to what you built in your dev repo:
 │       └── 00_setup/
 │           └── logging_tool/              # Same structure as dev repo
 │
-└── 02_project_specific_outputs/
+└── 02_project_specific_data/
     └── 00_setup/
         └── logging_tool/                  # Mirrors tool name
             ├── session_2025-10-27.json   # Created by tool at runtime
@@ -480,7 +508,7 @@ The structure remains identical to what you built in your dev repo:
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TOOL_NAME="logging_tool"  # Matches the tool's directory name
-LOG_OUTPUT="${SCRIPT_DIR}/../../../../../02_project_specific_outputs/00_setup/${TOOL_NAME}"
+LOG_OUTPUT="${SCRIPT_DIR}/../../../../../02_project_specific_data/00_setup/${TOOL_NAME}"
 
 mkdir -p "$LOG_OUTPUT"
 python3 ../src/session_tracker.py --output "$LOG_OUTPUT"
@@ -500,7 +528,7 @@ python3 ../src/session_tracker.py --output "$LOG_OUTPUT"
 # - Organization
 
 # 3. View session logs
-cat .agentic_repo_tools/02_project_specific_outputs/00_setup/logging_tool/session_2025-10-27.json
+cat .agentic_repo_tools/02_project_specific_data/00_setup/logging_tool/session_2025-10-27.json
 ```
 
 ---
@@ -510,7 +538,7 @@ cat .agentic_repo_tools/02_project_specific_outputs/00_setup/logging_tool/sessio
 ### ❌ Hardcoding Paths
 ```python
 # DON'T
-LOG_FILE = "/Users/michael/.agentic_repo_tools/02_project_specific_outputs/logging_tool/session.json"
+LOG_FILE = "/Users/michael/.agentic_repo_tools/02_project_specific_data/logging_tool/session.json"
 ```
 
 ### ❌ Assuming Current Working Directory
@@ -552,7 +580,7 @@ Once your tool meets these requirements and works correctly in your dev repo:
 
 1. **Verify checklist completion:**
    - [ ] Tool works within `.agentic_repo_tools/` structure in dev repo
-   - [ ] Outputs correctly to `02_project_specific_outputs/[phase]/[tool_name]/`
+   - [ ] Outputs correctly to `02_project_specific_data/[phase]/[tool_name]/`
    - [ ] All dependencies documented
    - [ ] README complete with phase classification reasoning
    - [ ] Tests passing
@@ -584,7 +612,7 @@ cp -r /path/to/your_tool_repo/.agentic_repo_tools/* ./.agentic_repo_tools/
 ./.agentic_repo_tools/01_project_agnostic_system/02_tools_src/[phase]/[tool_name]/cli/main_script.sh
 
 # Verify outputs
-ls ./.agentic_repo_tools/02_project_specific_outputs/[phase]/[tool_name]/
+ls ./.agentic_repo_tools/02_project_specific_data/[phase]/[tool_name]/
 ```
 
 **That's it!** Because you built with the mirrored structure, integration is a simple copy operation.
@@ -608,7 +636,7 @@ ls ./.agentic_repo_tools/02_project_specific_outputs/[phase]/[tool_name]/
 **The Golden Rules:**
 1. **Mirror the integration structure** - Build inside `.agentic_repo_tools/` in your dev repo
 2. **Use relative paths** - From tool location to outputs
-3. **Mirror tool names** - Write to `02_project_specific_outputs/[phase]/[tool_name]/`
+3. **Mirror tool names** - Write to `02_project_specific_data/[phase]/[tool_name]/`
 4. **Test in dev repo** - If it works there, it works after integration
 5. **Document everything** - Inputs, outputs, dependencies, phase classification reasoning
 6. **No path translation needed** - Copy-paste integration

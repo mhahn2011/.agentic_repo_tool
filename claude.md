@@ -58,7 +58,7 @@ agentic_repo_tools/                              # This integration repo
 │   │       ├── 03_testing/
 │   │       └── 04_organization/
 │   │
-│   └── 02_project_specific_outputs/            # Generated outputs
+│   └── 02_project_specific_data/            # Generated outputs
 │       ├── 00_setup/
 │       ├── 01_planning/
 │       ├── 02_implementation/
@@ -77,7 +77,7 @@ agentic_repo_tools/                              # This integration repo
 **Process-Step Organization:**
 - Both 01/ and 02/ mirror the same phases: setup → planning → implementation → testing → organization
 - Intuitive navigation: "What phase am I in?" maps directly to folder structure
-- Tools write to predictable locations: `../../02_project_specific_outputs/02_implementation/logs/`
+- Tools write to predictable locations: `../../02_project_specific_data/02_implementation/logs/`
 
 **Tools vs Procedures:**
 - **Tools** = deterministic scripts and scaffolding (Python, bash, etc.)

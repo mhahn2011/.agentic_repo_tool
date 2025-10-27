@@ -46,11 +46,11 @@ set -e  # Exit on error
 
 # Step 1: [Tool name] - what it does
 echo "Running [tool]..."
-[tool_command] > ../../02_project_specific_outputs/[phase]/[output].json
+[tool_command] > ../../02_project_specific_data/[phase]/[output].json
 
 # Step 2: [Next tool] - what it does
 echo "Running [next_tool]..."
-[next_tool_command] --input=../../02_project_specific_outputs/[phase]/[output].json
+[next_tool_command] --input=../../02_project_specific_data/[phase]/[output].json
 
 # Step 3: Validate
 echo "Validating results..."

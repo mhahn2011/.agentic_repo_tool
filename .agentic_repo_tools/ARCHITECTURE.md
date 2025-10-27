@@ -29,7 +29,7 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 │       ├── doc_sync_workflow.sh       # Example: metadata_extractor → auto_doc
 │       └── README.md
 │
-├── 02_project_specific_outputs/  # Generated outputs (gitignored in consumer projects)
+├── 02_project_specific_data/  # Generated outputs (gitignored in consumer projects)
 │   ├── 00_setup/                      # Setup artifacts
 │   ├── 01_planning/                   # Planning deliverables
 │   ├── 02_implementation/             # Code logs, commit metadata
@@ -51,7 +51,7 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 - Tool source code
 - Integration scripts
 
-**02_project_specific_outputs** = **State** (generated per-project, gitignored, evolves during development)
+**02_project_specific_data** = **State** (generated per-project, gitignored, evolves during development)
 - Tool outputs
 - Logs and metrics
 - Project-specific artifacts
@@ -73,7 +73,7 @@ Integration scripts orchestrate multiple tools without tight coupling:
 ## Knowledge Base Organization
 
 ### Process-Step Mirroring
-`02_project_specific_outputs/` mirrors the functional phases in `01/02_tools_src/` for intuitive navigation:
+`02_project_specific_data/` mirrors the functional phases in `01/02_tools_src/` for intuitive navigation:
 - Setup tools (00_setup) → `00_setup/` outputs
 - Planning tools (01_planning) → `01_planning/` outputs
 - Implementation tools (02_implementation) → `02_implementation/` outputs
@@ -83,7 +83,7 @@ Integration scripts orchestrate multiple tools without tight coupling:
 ### Predictable Paths
 Tools write outputs using relative paths:
 ```bash
-../../02_project_specific_outputs/02_implementation/logs/
+../../02_project_specific_data/02_implementation/logs/
 ```
 
 Integration scripts read from these predictable locations:
@@ -128,7 +128,7 @@ Workflows that span multiple phases (e.g., organization → testing → implemen
 2. **Gitignore generated outputs:**
    ```
    # .gitignore
-   .agentic_repo_tools/02_project_specific_outputs/
+   .agentic_repo_tools/02_project_specific_data/
    ```
 
 3. **Run tools:**
