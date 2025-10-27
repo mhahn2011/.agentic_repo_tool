@@ -20,7 +20,7 @@
 ## Immediate Next Actions
 
 ### 1. Logging Tool Integration (Priority 1)
-**Location:** Separate dev repo → integrate to `.agentic_repo_tools/01/02_tools_src/03_implementation/logging_tool/`
+**Location:** Separate dev repo → integrate to `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/02_implementation/logging_tool/`
 
 **Steps:**
 - [ ] Clean logging tool in its dev repo
@@ -29,7 +29,7 @@
   - `view_sprint_statistics.sh`
   - `src/` directory
 - [ ] Copy to integration repo
-- [ ] Configure output paths to `../../02_project_specific_knowledge_base/02_implementation/logs/`
+- [ ] Configure output paths to `../../02_project_specific_outputs/02_implementation/logs/`
 - [ ] Add `--dry-run` mode if needed
 - [ ] Test from integration repo
 - [ ] Use tool to dogfood (track this integration work)
@@ -43,15 +43,15 @@
 
 ### 2. Auto-Move Tool (Priority 2)
 - Clean in dev repo
-- Integrate to `.agentic_repo_tools/01/02_tools_src/05_organization/auto_move/`
-- Outputs to `02/04_organization/move_logs/`
+- Integrate to `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/04_organization/auto_move/`
+- Outputs to `02_project_specific_outputs/04_organization/move_logs/`
 - Document tool interface (inputs/outputs)
 - Identify composition opportunities with logging tool
 
 ### 3. Auto-Resize Tool (Priority 3)
 - Clean in dev repo
-- Integrate to `.agentic_repo_tools/01/02_tools_src/05_organization/auto_resize/`
-- Outputs to `02/04_organization/resize_logs/`
+- Integrate to `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/04_organization/auto_resize/`
+- Outputs to `02_project_specific_outputs/04_organization/resize_logs/`
 - Create first integration script if composition patterns emerge
 
 ---

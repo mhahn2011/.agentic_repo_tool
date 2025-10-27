@@ -28,7 +28,7 @@ This is the **integration hub** for agentic coding tools. It serves as a clean a
 ### How Tools Flow
 
 1. Each tool lives in its own development repo with README, tests, development history
-2. When a tool is "done enough", copy it into `.agentic_repo_tools/01_project_agnostic_agentic_system/tools_src/`
+2. When a tool is "done enough", copy it into `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/`
 3. This repo documents conventions (how tools should behave, where they write output)
 4. Tools evolve independently; integration repo pulls in stable versions
 
@@ -49,21 +49,21 @@ agentic_repo_tools/                              # This integration repo
 │   └── Immediate Workflow.md
 │
 ├── .agentic_repo_tools/                        # The distributable product
-│   ├── 01_project_agnostic_agentic_system/     # Stable, unchanging core
+│   ├── 01_project_agnostic_system/             # Stable, unchanging core
 │   │   ├── procedural_docs/                    # Agent workflows (chronological)
-│   │   └── tools_src/                          # Deterministic tool code (functional org)
-│   │       ├── setup/
-│   │       ├── planning/
-│   │       ├── implementation/
-│   │       ├── organization/
-│   │       └── testing/
+│   │   └── 02_tools_src/                       # Deterministic tool code (functional org)
+│   │       ├── 00_setup/
+│   │       ├── 01_planning/
+│   │       ├── 02_implementation/
+│   │       ├── 03_testing/
+│   │       └── 04_organization/
 │   │
-│   └── 02_project_specific_knowledge_base/     # Generated outputs
-│       ├── setup/
-│       ├── planning/
-│       ├── implementation/
-│       ├── testing/
-│       └── organization/
+│   └── 02_project_specific_outputs/            # Generated outputs
+│       ├── 00_setup/
+│       ├── 01_planning/
+│       ├── 02_implementation/
+│       ├── 03_testing/
+│       └── 04_organization/
 │
 └── claude.md                                    # This file
 ```
@@ -77,7 +77,7 @@ agentic_repo_tools/                              # This integration repo
 **Process-Step Organization:**
 - Both 01/ and 02/ mirror the same phases: setup → planning → implementation → testing → organization
 - Intuitive navigation: "What phase am I in?" maps directly to folder structure
-- Tools write to predictable locations: `../../02_project_specific_knowledge_base/implementation/logs/`
+- Tools write to predictable locations: `../../02_project_specific_outputs/02_implementation/logs/`
 
 **Tools vs Procedures:**
 - **Tools** = deterministic scripts and scaffolding (Python, bash, etc.)

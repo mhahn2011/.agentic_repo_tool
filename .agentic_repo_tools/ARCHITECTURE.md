@@ -9,7 +9,7 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 ```
 .agentic_repo_tools/                   # The distributable toolkit
 │
-├── 01_project_agnostic_agentic_system/  # Stable, reusable capabilities
+├── 01_project_agnostic_system/  # Stable, reusable capabilities
 │   │
 │   ├── 01_procedural_docs/            # Agent workflows (chronological organization)
 │   │   └── Stage_X/
@@ -18,18 +18,18 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 │   │           └── Task-Specific-Agent-Definition-Doc.md
 │   │
 │   ├── 02_tools_src/                  # Tool source code (functional organization)
-│   │   ├── 01_setup/
-│   │   ├── 02_planning/
-│   │   ├── 03_implementation/
-│   │   ├── 04_testing/
-│   │   └── 05_organization/
+│   │   ├── 00_setup/
+│   │   ├── 01_planning/
+│   │   ├── 02_implementation/
+│   │   ├── 03_testing/
+│   │   └── 04_organization/
 │   │
 │   └── 03_integration_scripts/        # Cross-phase workflow compositions
 │       ├── refactor_workflow.sh       # Example: size_linter → auto_resize → auto_move
 │       ├── doc_sync_workflow.sh       # Example: metadata_extractor → auto_doc
 │       └── README.md
 │
-├── 02_project_specific_knowledge_base/  # Generated outputs (gitignored in consumer projects)
+├── 02_project_specific_outputs/  # Generated outputs (gitignored in consumer projects)
 │   ├── 00_setup/                      # Setup artifacts
 │   ├── 01_planning/                   # Planning deliverables
 │   ├── 02_implementation/             # Code logs, commit metadata
@@ -46,12 +46,12 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 
 ### 01/ vs 02/ Separation
 
-**01_project_agnostic_agentic_system** = **Capabilities** (stable, version-controlled, shared across projects)
+**01_project_agnostic_system** = **Capabilities** (stable, version-controlled, shared across projects)
 - Procedural docs (workflows)
 - Tool source code
 - Integration scripts
 
-**02_project_specific_knowledge_base** = **State** (generated per-project, gitignored, evolves during development)
+**02_project_specific_outputs** = **State** (generated per-project, gitignored, evolves during development)
 - Tool outputs
 - Logs and metrics
 - Project-specific artifacts
@@ -73,17 +73,17 @@ Integration scripts orchestrate multiple tools without tight coupling:
 ## Knowledge Base Organization
 
 ### Process-Step Mirroring
-`02_project_specific_knowledge_base/` mirrors the functional phases in `01/02_tools_src/` for intuitive navigation:
-- Setup tools (01_setup) → `00_setup/` outputs
-- Planning tools (02_planning) → `01_planning/` outputs
-- Implementation tools (03_implementation) → `02_implementation/` outputs
-- Testing tools (04_testing) → `03_testing/` outputs
-- Organization tools (05_organization) → `04_organization/` outputs
+`02_project_specific_outputs/` mirrors the functional phases in `01/02_tools_src/` for intuitive navigation:
+- Setup tools (00_setup) → `00_setup/` outputs
+- Planning tools (01_planning) → `01_planning/` outputs
+- Implementation tools (02_implementation) → `02_implementation/` outputs
+- Testing tools (03_testing) → `03_testing/` outputs
+- Organization tools (04_organization) → `04_organization/` outputs
 
 ### Predictable Paths
 Tools write outputs using relative paths:
 ```bash
-../../02_project_specific_knowledge_base/02_implementation/logs/
+../../02_project_specific_outputs/02_implementation/logs/
 ```
 
 Integration scripts read from these predictable locations:
@@ -101,11 +101,11 @@ If database migration becomes necessary, a migration script can reorganize `02/`
 
 ### Functional Decomposition (02_tools_src/)
 Tools organized by development phase:
-1. **01_setup/** – Configuration, environment initialization
-2. **02_planning/** – MVP definition, sprint planning
-3. **03_implementation/** – Coding, commits, logging
-4. **04_testing/** – Validation, coverage, regression
-5. **05_organization/** – Refactoring, documentation, file management
+1. **00_setup/** – Configuration, environment initialization
+2. **01_planning/** – MVP definition, sprint planning
+3. **02_implementation/** – Coding, commits, logging
+4. **03_testing/** – Validation, coverage, regression
+5. **04_organization/** – Refactoring, documentation, file management
 
 ### Chronological Organization (01_procedural_docs/)
 Agent workflows organized by execution sequence, not function. A workflow may reference tools from multiple phases.
@@ -128,17 +128,17 @@ Workflows that span multiple phases (e.g., organization → testing → implemen
 2. **Gitignore generated outputs:**
    ```
    # .gitignore
-   .agentic_repo_tools/02_project_specific_knowledge_base/
+   .agentic_repo_tools/02_project_specific_outputs/
    ```
 
 3. **Run tools:**
    ```bash
-   .agentic_repo_tools/01/.../02_tools_src/03_implementation/logging_tool/launch_sprint_session.sh
+   .agentic_repo_tools/01_project_agnostic_system/02_tools_src/02_implementation/logging_tool/launch_sprint_session.sh
    ```
 
 4. **Run integration workflows:**
    ```bash
-   .agentic_repo_tools/01/.../03_integration_scripts/refactor_workflow.sh
+   .agentic_repo_tools/01_project_agnostic_system/03_integration_scripts/refactor_workflow.sh
    ```
 
 ### Updating the Toolkit

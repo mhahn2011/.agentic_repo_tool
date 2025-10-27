@@ -1,5 +1,5 @@
-# Project-specific knowledge base outputs (generated data)
-.agentic_repo_tools/02_project_specific_knowledge_base/
+# Project-specific outputs (generated data)
+.agentic_repo_tools/02_project_specific_outputs/
 
 # Python
 __pycache__/
