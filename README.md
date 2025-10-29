@@ -21,16 +21,24 @@ agentic_repo_tools/
 │
 ├── .agentic_repo_tools/              # The distributable toolkit (clone this into your projects)
 │   ├── 01_project_agnostic.../       # Stable tools and workflows (capabilities)
-│   │   ├── 01_procedural_docs/       # Agent workflow instructions
-│   │   ├── 02_tools_src/             # Deterministic tool code (flat structure)
-│   │   │   ├── workflow_usage_tracker/
-│   │   │   ├── script_map_and_move/
-│   │   │   └── registry.json         # Tool metadata and discovery
-│   │   └── 03_integration_scripts/   # Tool composition workflows
+│   │   ├── 01_composable_elements/   # Building blocks for pipelines
+│   │   │   ├── 01_tools/             # Deterministic utilities
+│   │   │   │   ├── workflow_usage_tracker/
+│   │   │   │   ├── script_map_and_move/
+│   │   │   │   └── registry.json
+│   │   │   ├── 02_commands/          # Claude Code slash commands
+│   │   │   └── 03_agents/            # Agent role definitions
+│   │   ├── 01_procedural_docs/       # General SOPs (placeholder)
+│   │   └── 02_pipelines/             # Multi-step workflows
+│   │       └── refactor_with_tracking/
 │   │
 │   ├── 02_project_specific.../       # Generated outputs (state/data - gitignored in projects)
-│   │   ├── workflow_usage_tracker/   # Per-tool output directories
-│   │   └── script_map_and_move/
+│   │   ├── 01_composable_elements/   # Element outputs
+│   │   │   ├── 01_tools/
+│   │   │   │   ├── workflow_usage_tracker/
+│   │   │   │   └── script_map_and_move/
+│   │   │   └── 02_commands/          # Command outputs (if any)
+│   │   └── 02_pipelines/             # Pipeline execution results
 │   │
 │   └── ARCHITECTURE.md               # Technical architecture reference
 │
@@ -60,11 +68,12 @@ agentic_repo_tools/
 
 This separation allows the toolkit to be cloned into any project while keeping project-specific data separate.
 
-### Flat Tool Organization with Registry
-Tools live in a flat structure under `02_tools_src/`, discovered via `registry.json`:
-- **No phase categorization** - tools often apply to multiple phases
-- **Registry-based discovery** - JSON metadata for programmatic access
-- **Per-tool outputs** - `02_project_specific_data/<tool_name>/`
+### Composable Elements Architecture
+Building blocks organized by type, composed in pipelines:
+- **Tools** (`01_tools/`) - Deterministic utilities with registry-based discovery
+- **Commands** (`02_commands/`) - Claude Code slash commands for orchestration
+- **Agents** (`03_agents/`) - Agent role definitions for agentic workflows
+- **Pipelines** (`02_pipelines/`) - Multi-step workflows composing elements together
 
 ### Tools vs. Procedures
 - **Tools** = Deterministic scripts (Python, bash) - cheap, fast, reliable

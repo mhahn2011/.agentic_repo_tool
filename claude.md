@@ -53,16 +53,24 @@ agentic_repo_tools/                              # This integration repo
 │
 ├── .agentic_repo_tools/                        # The distributable product
 │   ├── 01_project_agnostic_system/             # Stable, unchanging core
-│   │   ├── 01_procedural_docs/                 # Agent workflows (chronological)
-│   │   ├── 02_tools_src/                       # Deterministic tool code (flat structure)
-│   │   │   ├── workflow_usage_tracker/         # Session tracking & analytics
-│   │   │   ├── script_map_and_move/            # Python refactoring tool
-│   │   │   └── registry.json                   # Tool metadata and discovery
-│   │   └── 03_integration_scripts/             # Tool composition workflows
+│   │   ├── 01_composable_elements/             # Building blocks for pipelines
+│   │   │   ├── 01_tools/                       # Deterministic utilities
+│   │   │   │   ├── workflow_usage_tracker/
+│   │   │   │   ├── script_map_and_move/
+│   │   │   │   └── registry.json
+│   │   │   ├── 02_commands/                    # Claude Code slash commands
+│   │   │   └── 03_agents/                      # Agent role definitions
+│   │   ├── 01_procedural_docs/                 # General SOPs (placeholder)
+│   │   └── 02_pipelines/                       # Multi-step workflows
+│   │       └── refactor_with_tracking/
 │   │
 │   └── 02_project_specific_data/               # Project-specific inputs & outputs
-│       ├── workflow_usage_tracker/             # Per-tool output directories
-│       └── script_map_and_move/
+│       ├── 01_composable_elements/
+│       │   ├── 01_tools/
+│       │   │   ├── workflow_usage_tracker/
+│       │   │   └── script_map_and_move/
+│       │   └── 02_commands/
+│       └── 02_pipelines/
 │
 ├── claude.md                                    # This file
 └── README.md                                    # User-facing overview
@@ -74,15 +82,18 @@ agentic_repo_tools/                              # This integration repo
 - 01/ = capabilities (stable, version-controlled, distributable)
 - 02/ = state (generated, gitignored, project-specific)
 
-**Flat Tool Organization:**
-- Tools live in flat structure under `02_tools_src/`
-- Discovery via `registry.json` with structured metadata
-- No phase categorization - tools often apply to multiple phases
-- Outputs organized by tool name: `02_project_specific_data/<tool_name>/`
+**Composable Elements Architecture:**
+- **Tools** = deterministic scripts (Python, bash) with registry-based discovery
+- **Commands** = Claude Code slash commands for orchestration
+- **Agents** = role definitions for agentic workflows (invoked through commands)
+- **Pipelines** = multi-step workflows composing elements together
+- Mirrored numbering in 02/ for predictable output locations
 
-**Tools vs Procedures:**
-- **Tools** = deterministic scripts and scaffolding (Python, bash, etc.)
-- **Procedures** = agentic workflows (reasoning-driven, agent instructions)
+**Composition Model:**
+- Tools provide deterministic functionality
+- Commands orchestrate and invoke agents
+- Agents reason and make decisions (through commands)
+- Pipelines compose everything into complete workflows
 
 ---
 
@@ -90,15 +101,19 @@ agentic_repo_tools/                              # This integration repo
 
 ### ✅ Completed (Phase 1)
 - ✅ Architecture defined and documented
-- ✅ Directory structure created with flat tool organization
+- ✅ **Composable elements architecture** implemented
+  - 01_tools/ (deterministic utilities)
+  - 02_commands/ (slash commands for orchestration)
+  - 03_agents/ (agent role definitions)
+  - 02_pipelines/ (multi-step workflows)
 - ✅ Git repository initialized and pushed to GitHub
 - ✅ Planning docs completed (Vision, MVP, Roadmap)
-- ✅ Integration requirements documented (`02_implementation_docs/Tool_Integration_Requirements.md`)
-- ✅ Renamed `02_project_specific_outputs/` → `02_project_specific_data/` (clearer naming)
+- ✅ Integration requirements documented
 - ✅ **workflow_usage_tracker** integrated (cross-phase session tracking)
 - ✅ **script_map_and_move** integrated (Python refactoring)
 - ✅ **registry.json** created for tool discovery
-- ✅ Flattened structure - phase categorization removed (first tool broke the pattern)
+- ✅ Flattened structure - phase categorization removed
+- ✅ **refactor_with_tracking** pipeline defined (implementation pending)
 
 ### 🎯 Current Focus
 - Dogfooding integrated tools in real projects
@@ -121,17 +136,17 @@ Phase 1 proved the integration architecture works by integrating two complete, p
 ### What We Integrated
 
 **1. workflow_usage_tracker** (replaced "logging tool" from original plan)
-- **Location:** `02_tools_src/workflow_usage_tracker/`
+- **Location:** `01_composable_elements/01_tools/workflow_usage_tracker/`
 - **Features:** Cross-project workflow analytics, session tracking, 5 core workflows
 - **Applicable phases:** All (different entry points per phase)
-- **Outputs to:** `02_project_specific_data/workflow_usage_tracker/`
+- **Outputs to:** `02_project_specific_data/01_composable_elements/01_tools/workflow_usage_tracker/`
 - **Dependencies:** Python 3.7+, zero external packages
 
 **2. script_map_and_move** (replaced "auto_move" from original plan)
-- **Location:** `02_tools_src/script_map_and_move/`
+- **Location:** `01_composable_elements/01_tools/script_map_and_move/`
 - **Features:** Safe Python file refactoring with AST-based import rewriting
 - **Applicable phases:** 02_implementation, 04_organization
-- **Outputs to:** `02_project_specific_data/script_map_and_move/`
+- **Outputs to:** `02_project_specific_data/01_composable_elements/01_tools/script_map_and_move/`
 - **Dependencies:** Python 3.6+, stdlib only
 - **Tested on:** arrow (23 files, 251 imports), httpie (133 files), rich (190 files)
 
