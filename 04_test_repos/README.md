@@ -19,19 +19,41 @@ Each test repo has two subdirectories:
 1. Clone or copy a test repository into `01_original/`
 2. Copy `01_original/` to `02_modified/` when running tests
 
-**Testing workflow:**
+**Quick Reset (Recommended):**
 ```bash
-# Reset to pristine state
-rm -rf 04_test_repos/arrow/02_modified/*
-cp -r 04_test_repos/arrow/01_original/* 04_test_repos/arrow/02_modified/
+# Reset all test repos with latest toolkit
+cd 04_test_repos
+./reset_tests.sh
 
-# Run tool tests on 02_modified/
+# Or reset specific repo
+./reset_tests.sh arrow
+```
+
+**Manual Testing workflow:**
+```bash
+# Run tool tests on 02_modified/ (toolkit already inside)
+cd 04_test_repos/arrow/02_modified
 .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move/cli/refactor_tool.py \
-  --project 04_test_repos/arrow/02_modified/
+  <args>
 
 # Inspect results, compare to original
-diff -r 04_test_repos/arrow/01_original/ 04_test_repos/arrow/02_modified/
+diff -r ../01_original/ .
 ```
+
+## Reset Script
+
+**`reset_tests.sh`** prepares test repos for fresh testing:
+- Deletes all `02_modified/` contents
+- Copies fresh `01_original/` to `02_modified/`
+- Copies latest `.agentic_repo_tools/` into each `02_modified/`
+
+**Usage:**
+```bash
+./reset_tests.sh           # Reset all repos
+./reset_tests.sh arrow     # Reset specific repo
+```
+
+Run this before each major test cycle to ensure clean state and latest toolkit version.
 
 ## Available Test Repos
 
@@ -40,6 +62,35 @@ Python datetime library with complex import structure
 - **Size:** ~23 Python files, 251 imports
 - **Good for:** Testing refactoring, import rewriting
 - **Source:** https://github.com/arrow-py/arrow
+
+### click/
+Python CLI creation library
+- **Size:** Large codebase with extensive CLI utilities
+- **Good for:** Testing complex codebases, CLI tool refactoring
+- **Source:** https://github.com/pallets/click
+
+### example_app/
+Small example application (local, no public repo)
+- **Size:** Small Python application
+- **Good for:** Quick testing, validating basic functionality
+
+### httpie/
+Modern command-line HTTP client
+- **Size:** ~133 Python files (large codebase)
+- **Good for:** Testing large-scale refactoring
+- **Source:** https://github.com/httpie/cli
+
+### pycalculator/
+Simple Python calculator
+- **Size:** Small, focused codebase
+- **Good for:** Simple refactoring tests, quick validation
+- **Source:** https://github.com/juliotrigo/pycalculator
+
+### rich/
+Python library for rich text and formatting in terminal
+- **Size:** ~190 Python files (very large codebase)
+- **Good for:** Stress testing, large-scale import management
+- **Source:** https://github.com/Textualize/rich
 
 ## Adding New Test Repos
 
