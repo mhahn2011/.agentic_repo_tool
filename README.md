@@ -22,15 +22,15 @@ agentic_repo_tools/
 ├── .agentic_repo_tools/              # The distributable toolkit (clone this into your projects)
 │   ├── 01_project_agnostic.../       # Stable tools and workflows (capabilities)
 │   │   ├── 01_procedural_docs/       # Agent workflow instructions
-│   │   ├── 02_tools_src/             # Deterministic tool code (by phase)
+│   │   ├── 02_tools_src/             # Deterministic tool code (flat structure)
+│   │   │   ├── workflow_usage_tracker/
+│   │   │   ├── script_map_and_move/
+│   │   │   └── registry.json         # Tool metadata and discovery
 │   │   └── 03_integration_scripts/   # Tool composition workflows
 │   │
 │   ├── 02_project_specific.../       # Generated outputs (state/data - gitignored in projects)
-│   │   ├── 00_setup/
-│   │   ├── 01_planning/
-│   │   ├── 02_implementation/
-│   │   ├── 03_testing/
-│   │   └── 04_organization/
+│   │   ├── workflow_usage_tracker/   # Per-tool output directories
+│   │   └── script_map_and_move/
 │   │
 │   └── ARCHITECTURE.md               # Technical architecture reference
 │
@@ -60,11 +60,11 @@ agentic_repo_tools/
 
 This separation allows the toolkit to be cloned into any project while keeping project-specific data separate.
 
-### Process-Step Organization
-Both 01/ and 02/ mirror the same development phases:
-- **Setup** → **Planning** → **Implementation** → **Testing** → **Organization**
-
-This makes it intuitive: "What phase am I in?" maps directly to folder structure.
+### Flat Tool Organization with Registry
+Tools live in a flat structure under `02_tools_src/`, discovered via `registry.json`:
+- **No phase categorization** - tools often apply to multiple phases
+- **Registry-based discovery** - JSON metadata for programmatic access
+- **Per-tool outputs** - `02_project_specific_data/<tool_name>/`
 
 ### Tools vs. Procedures
 - **Tools** = Deterministic scripts (Python, bash) - cheap, fast, reliable

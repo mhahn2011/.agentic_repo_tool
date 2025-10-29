@@ -54,24 +54,15 @@ agentic_repo_tools/                              # This integration repo
 ├── .agentic_repo_tools/                        # The distributable product
 │   ├── 01_project_agnostic_system/             # Stable, unchanging core
 │   │   ├── 01_procedural_docs/                 # Agent workflows (chronological)
-│   │   ├── 02_tools_src/                       # Deterministic tool code (by phase)
-│   │   │   ├── 00_setup/
-│   │   │   │   └── workflow_usage_tracker/     # Session tracking & analytics
-│   │   │   ├── 01_planning/
-│   │   │   ├── 02_implementation/
-│   │   │   ├── 03_testing/
-│   │   │   └── 04_organization/
-│   │   │       └── script_map_and_move/        # Python refactoring tool
+│   │   ├── 02_tools_src/                       # Deterministic tool code (flat structure)
+│   │   │   ├── workflow_usage_tracker/         # Session tracking & analytics
+│   │   │   ├── script_map_and_move/            # Python refactoring tool
+│   │   │   └── registry.json                   # Tool metadata and discovery
 │   │   └── 03_integration_scripts/             # Tool composition workflows
 │   │
 │   └── 02_project_specific_data/               # Project-specific inputs & outputs
-│       ├── 00_setup/
-│       │   └── workflow_usage_tracker/
-│       ├── 01_planning/
-│       ├── 02_implementation/
-│       ├── 03_testing/
-│       └── 04_organization/
-│           └── script_map_and_move/
+│       ├── workflow_usage_tracker/             # Per-tool output directories
+│       └── script_map_and_move/
 │
 ├── claude.md                                    # This file
 └── README.md                                    # User-facing overview
@@ -83,10 +74,11 @@ agentic_repo_tools/                              # This integration repo
 - 01/ = capabilities (stable, version-controlled, distributable)
 - 02/ = state (generated, gitignored, project-specific)
 
-**Process-Step Organization:**
-- Both 01/ and 02/ mirror the same phases: setup → planning → implementation → testing → organization
-- Intuitive navigation: "What phase am I in?" maps directly to folder structure
-- Tools write to predictable locations: `../../02_project_specific_data/02_implementation/logs/`
+**Flat Tool Organization:**
+- Tools live in flat structure under `02_tools_src/`
+- Discovery via `registry.json` with structured metadata
+- No phase categorization - tools often apply to multiple phases
+- Outputs organized by tool name: `02_project_specific_data/<tool_name>/`
 
 **Tools vs Procedures:**
 - **Tools** = deterministic scripts and scaffolding (Python, bash, etc.)
@@ -98,14 +90,15 @@ agentic_repo_tools/                              # This integration repo
 
 ### ✅ Completed (Phase 1)
 - ✅ Architecture defined and documented
-- ✅ Directory structure created with numbered folders
+- ✅ Directory structure created with flat tool organization
 - ✅ Git repository initialized and pushed to GitHub
 - ✅ Planning docs completed (Vision, MVP, Roadmap)
 - ✅ Integration requirements documented (`02_implementation_docs/Tool_Integration_Requirements.md`)
 - ✅ Renamed `02_project_specific_outputs/` → `02_project_specific_data/` (clearer naming)
-- ✅ **workflow_usage_tracker** integrated to `00_setup/`
-- ✅ **script_map_and_move** integrated to `04_organization/`
-- ✅ Both tools tested and validated
+- ✅ **workflow_usage_tracker** integrated (cross-phase session tracking)
+- ✅ **script_map_and_move** integrated (Python refactoring)
+- ✅ **registry.json** created for tool discovery
+- ✅ Flattened structure - phase categorization removed (first tool broke the pattern)
 
 ### 🎯 Current Focus
 - Dogfooding integrated tools in real projects
@@ -128,25 +121,28 @@ Phase 1 proved the integration architecture works by integrating two complete, p
 ### What We Integrated
 
 **1. workflow_usage_tracker** (replaced "logging tool" from original plan)
-- **Location:** `00_setup/workflow_usage_tracker/`
+- **Location:** `02_tools_src/workflow_usage_tracker/`
 - **Features:** Cross-project workflow analytics, session tracking, 5 core workflows
-- **Outputs to:** `02_project_specific_data/00_setup/workflow_usage_tracker/`
+- **Applicable phases:** All (different entry points per phase)
+- **Outputs to:** `02_project_specific_data/workflow_usage_tracker/`
 - **Dependencies:** Python 3.7+, zero external packages
 
 **2. script_map_and_move** (replaced "auto_move" from original plan)
-- **Location:** `04_organization/script_map_and_move/`
+- **Location:** `02_tools_src/script_map_and_move/`
 - **Features:** Safe Python file refactoring with AST-based import rewriting
-- **Outputs to:** `02_project_specific_data/04_organization/script_map_and_move/`
+- **Applicable phases:** 02_implementation, 04_organization
+- **Outputs to:** `02_project_specific_data/script_map_and_move/`
 - **Dependencies:** Python 3.6+, stdlib only
 - **Tested on:** arrow (23 files, 251 imports), httpie (133 files), rich (190 files)
 
 ### Success Criteria - Met ✅
 - ✅ Both tools run successfully from `.agentic_repo_tools/` structure
-- ✅ Outputs correctly go to `02_project_specific_data/[phase]/[tool_name]/`
+- ✅ Outputs correctly go to `02_project_specific_data/<tool_name>/`
 - ✅ Relative path navigation works reliably
 - ✅ 01/02 separation proves valuable (clear agnostic vs project-specific boundary)
 - ✅ Mirrored dev repo structure enables copy-paste integration
-- ✅ Architecture feels helpful, not burdensome
+- ✅ Phase-based categorization failed immediately (workflow_usage_tracker spans all phases)
+- ✅ Flat structure with registry.json provides better discovery
 
 ---
 
@@ -157,10 +153,10 @@ Phase 1 proved the integration architecture works by integrating two complete, p
 - ✅ Verify tool works standalone
 - ✅ Mirror `.agentic_repo_tools/` structure in dev repo (enables copy-paste)
 - ✅ Use relative path navigation (no hardcoded paths)
-- ✅ Write outputs to `02_project_specific_data/[phase]/[tool_name]/`
+- ✅ Write outputs to `02_project_specific_data/<tool_name>/`
 - ✅ Create comprehensive README with usage, inputs, outputs, dependencies
 - ✅ Add `.gitignore` to tool directory (Python cache, OS files, etc.)
-- ✅ Create `.gitkeep` in mirrored output directory (shows structure)
+- ✅ Add entry to `registry.json` with metadata
 - ✅ Test tool from integration repo
 - ✅ Document in `02_implementation_docs/Tool_Integration_Requirements.md`
 
@@ -170,19 +166,25 @@ Phase 1 proved the integration architecture works by integrating two complete, p
 - Mirrored dev repo structure → copy-paste integration (no path translation)
 - Relative path calculation from script location
 - 01/02 separation provides clear mental model
-- Phase classification by WHEN invoked (not WHAT processed)
 - Comprehensive inline READMEs > centralized procedural docs
-- `.gitkeep` files make mirrored structure visible before first run
+- JSON registry for machine-parsable tool metadata
+
+**What Failed:**
+- **Phase-based categorization broke immediately** - workflow_usage_tracker has 5 entry points across different phases
+- Would have required duplicating tool or forcing artificial "00_setup" meta-category
+- Flat structure with registry-based discovery solves this elegantly
 
 **What Changed:**
 - Tool names became more descriptive (logging → workflow_usage_tracker, auto_move → script_map_and_move)
 - Folder naming: `02_project_specific_outputs/` → `02_project_specific_data/` (includes inputs too)
+- Architecture: Phase folders → flat structure + registry.json
 - Integration requirements doc created to codify standards
 
 **Questions Answered:**
 - ✅ Is 01/02 separation helpful? **YES** - clear boundary, predictable paths
 - ✅ Do relative paths work? **YES** - both tools navigate correctly
 - ✅ Inline vs centralized docs? **INLINE** - comprehensive tool READMEs work better
+- ✅ Does phase organization work? **NO** - first tool proved it's too rigid for cross-cutting tools
 
 ---
 

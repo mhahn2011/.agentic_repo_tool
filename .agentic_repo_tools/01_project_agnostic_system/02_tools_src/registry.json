@@ -1,0 +1,102 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-10-27",
+  "tools": [
+    {
+      "name": "workflow_usage_tracker",
+      "description": "Track and analyze Claude Code sessions by workflow type across all projects",
+      "phases": ["all"],
+      "entry_points": [
+        {
+          "script": "cli/launch_brainstorming.sh",
+          "description": "Launch brainstorming/systems thinking session",
+          "applicable_phases": ["01_planning"]
+        },
+        {
+          "script": "cli/launch_planning.sh",
+          "description": "Launch task breakdown/planning session",
+          "applicable_phases": ["01_planning"]
+        },
+        {
+          "script": "cli/launch_implementation.sh",
+          "description": "Launch code writing/feature building session",
+          "applicable_phases": ["02_implementation"]
+        },
+        {
+          "script": "cli/launch_refactoring.sh",
+          "description": "Launch code cleanup/reorganization session",
+          "applicable_phases": ["04_organization"]
+        },
+        {
+          "script": "cli/launch_documentation.sh",
+          "description": "Launch documentation writing session",
+          "applicable_phases": ["04_organization"]
+        },
+        {
+          "script": "cli/launch_sprint.sh",
+          "description": "Launch structured sprint with plan file",
+          "applicable_phases": ["all"]
+        },
+        {
+          "script": "cli/view_workflow_stats.sh",
+          "description": "View cross-project usage analytics",
+          "applicable_phases": ["all"]
+        }
+      ],
+      "inputs": {
+        "required": [],
+        "optional": [
+          "--sprint-plan <file> (for sprint mode only)"
+        ]
+      },
+      "outputs": {
+        "location": "02_project_specific_data/workflow_usage_tracker/",
+        "files": [
+          "metadata.json (project-local session tracking)",
+          "~/.workflow_usage_tracker/metadata.json (global cross-project analytics)"
+        ]
+      },
+      "dependencies": {
+        "python": "3.7+",
+        "external_packages": []
+      }
+    },
+    {
+      "name": "script_map_and_move",
+      "description": "Safe Python file refactoring with automatic import rewriting using AST parsing",
+      "phases": ["02_implementation", "04_organization"],
+      "entry_points": [
+        {
+          "script": "cli/refactor_tool.py",
+          "description": "Execute file moves with automatic import updates",
+          "applicable_phases": ["02_implementation", "04_organization"]
+        }
+      ],
+      "inputs": {
+        "required": [
+          "--plan <refactor_plan.json>"
+        ],
+        "optional": [
+          "--dry-run (preview changes without applying)",
+          "--verify-only (validate plan without executing)",
+          "--no-commit (skip git operations)",
+          "--yes / -y (non-interactive mode)",
+          "--root <dir> (project root, defaults to current directory)",
+          "--init-registry (generate import registry from current structure)"
+        ]
+      },
+      "outputs": {
+        "location": "02_project_specific_data/script_map_and_move/",
+        "files": [
+          "refactor_report_YYYY-MM-DD.md (planned - execution summary)",
+          "import_updates.log (planned - detailed change log)",
+          "Git commits (pre-refactor checkpoint + post-refactor commit, unless --no-commit)"
+        ]
+      },
+      "dependencies": {
+        "python": "3.6+",
+        "external_packages": []
+      }
+    }
+  ]
+}
