@@ -14,14 +14,14 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Determine output directory using relative paths from script location
-# This script is at: 01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/lib/common.sh
-# Output should be: 02_project_specific_data/00_setup/workflow_usage_tracker/
+# This script is at: 01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/lib/common.sh
+# Output should be: 02_project_specific_data/01_composable_elements/01_tools/workflow_usage_tracker/
 get_output_dir() {
     local lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     local tool_root="$(dirname "$lib_dir")"
     local agentic_root="$(cd "$tool_root/../../../../.." && pwd)"
 
-    echo "$agentic_root/02_project_specific_data/00_setup/workflow_usage_tracker"
+    echo "$agentic_root/02_project_specific_data/01_composable_elements/01_tools/workflow_usage_tracker"
 }
 
 # Global metadata directory (cross-project analytics)

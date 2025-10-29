@@ -61,12 +61,12 @@ def get_project_data_path() -> Path:
 
     Returns absolute path to the project-specific data directory.
     """
-    # Tool is at: .agentic_repo_tools/01_project_agnostic_system/02_tools_src/04_organization/script_map_and_move/cli/refactor_tool.py
-    # Target is:  .agentic_repo_tools/02_project_specific_data/04_organization/script_map_and_move/
+    # Tool is at: .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move/cli/refactor_tool.py
+    # Target is:  .agentic_repo_tools/02_project_specific_data/01_composable_elements/01_tools/script_map_and_move/
     tool_file = Path(__file__).resolve()  # Get absolute path
-    # Navigate: cli/ -> script_map_and_move/ -> 04_organization/ -> 02_tools_src/ -> 01_project_agnostic_system/ -> .agentic_repo_tools/
+    # Navigate: cli/ -> script_map_and_move/ -> 01_tools/ -> 01_composable_elements/ -> 01_project_agnostic_system/ -> .agentic_repo_tools/
     agentic_root = tool_file.parent.parent.parent.parent.parent.parent
-    data_path = agentic_root / "02_project_specific_data" / "04_organization" / "script_map_and_move"
+    data_path = agentic_root / "02_project_specific_data" / "01_composable_elements" / "01_tools" / "script_map_and_move"
 
     # Create directory if it doesn't exist
     data_path.mkdir(parents=True, exist_ok=True)
