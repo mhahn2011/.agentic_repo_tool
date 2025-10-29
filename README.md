@@ -35,7 +35,7 @@ agentic_repo_tools/
 │   └── ARCHITECTURE.md               # Technical architecture reference
 │
 ├── 01_planning_docs/                 # Toolkit development planning (meta-level)
-│   ├── 00_Immediate_To_Do.md         # What to do right now
+│   ├── 00_Immediate_To_Do.md         # Current status and next actions
 │   ├── 00_Vision.md                  # Why we're building this
 │   ├── 01_Roadmap.md                 # How we'll build it (4 phases)
 │   ├── 02_MVP.md                     # First validation checkpoint
@@ -43,7 +43,8 @@ agentic_repo_tools/
 │   ├── 04_Future_Agentic_Orchestration.md  # Phase 4 experimental designs
 │   └── README.md                     # Planning docs navigation
 │
-├── 02_progress_tracking/             # Integration progress (placeholder until Phase 1)
+├── 02_implementation_docs/           # Integration guides and standards
+│   └── Tool_Integration_Requirements.md  # Standards for integration-ready tools
 │
 ├── claude.md                         # Claude Code context (design principles, strategy)
 └── README.md                         # This file
@@ -76,9 +77,13 @@ We build deterministic scaffolding first, layer in agentic components where reas
 ## Current Status
 
 **Phase 0:** ✅ Complete (Architecture defined, planning docs finalized)
-**Phase 1:** 🔄 In progress (Logging tool integration - proving the pattern)
+**Phase 1:** ✅ Complete (Two tools integrated, architecture validated)
 
-See `01_planning_docs/01_Roadmap.md` for detailed phases.
+### Integrated Tools
+- **workflow_usage_tracker** (`00_setup/`) - Cross-project workflow analytics and session tracking
+- **script_map_and_move** (`04_organization/`) - Safe Python file refactoring with automatic import updates
+
+See `01_planning_docs/00_Immediate_To_Do.md` for current progress and `01_planning_docs/01_Roadmap.md` for detailed phases.
 
 ---
 
@@ -93,9 +98,15 @@ See `01_planning_docs/01_Roadmap.md` for detailed phases.
 
 ### Phase Progression
 
-**Phase 1:** Integrate first tool (logging) → validate 01/02 architecture works
-**Phase 2:** Add 3-5 tools iteratively → subjectively validate each through real use
+**Phase 1:** ✅ Integrate first tools → validate 01/02 architecture works
+  - **Completed:** workflow_usage_tracker + script_map_and_move integrated successfully
+  - **Validated:** Mirrored structure, relative paths, 01/02 separation all work as designed
+
+**Phase 2:** Add 3-5 more tools iteratively → validate through real use
+  - **Next:** Dogfood current tools, identify composition opportunities
+
 **Phase 3:** Add MCP integration → make tools easier for agents to access (if justified)
+
 **Phase 4:** Experiment with agentic layers → design experiments to measure cost/benefit
 
 Each phase has clear go/no-go criteria. Don't proceed unless previous phase proved valuable.
@@ -126,7 +137,8 @@ See `claude.md` for comprehensive design principles and strategy.
 **For users wanting to use the toolkit:**
 - Clone `.agentic_repo_tools/` into your project
 - See `.agentic_repo_tools/ARCHITECTURE.md` for deployment details
-- *(Note: Toolkit not yet ready for external use - Phase 1 in progress)*
+- Tool documentation in each tool's README
+- *(Note: Early phase - use at your own risk, API may change)*
 
 ---
 
@@ -135,7 +147,7 @@ See `claude.md` for comprehensive design principles and strategy.
 ❌ **Not an AI framework** - We're complementary to Claude Code, not replacing it
 ❌ **Not a code generator** - We provide organizational utilities, not code generation
 ❌ **Not universally applicable** - This solves *our* problems; others may need different tools
-❌ **Not production-ready yet** - Currently validating architecture with first tool
+❌ **Not production-grade yet** - Early phase, expect changes as we learn from real usage
 
 ---
 

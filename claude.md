@@ -1,6 +1,6 @@
 # Claude Context: Agentic Repo Tools
 
-**Last Updated:** 2025-10-25
+**Last Updated:** 2025-10-27
 
 ## Repository Purpose
 
@@ -41,31 +41,40 @@ This is the **integration hub** for agentic coding tools. It serves as a clean a
 ```
 agentic_repo_tools/                              # This integration repo
 │
-├── planning_docs/                               # Toolkit development planning
-│   ├── Vision.md
-│   ├── MVP.md
-│   ├── Roadmap.md
-│   ├── Sprint_Planning.md
-│   └── Immediate Workflow.md
+├── 01_planning_docs/                            # Toolkit development planning
+│   ├── 00_Immediate_To_Do.md                   # Current status & next actions
+│   ├── 00_Vision.md                            # Why we're building this
+│   ├── 01_Roadmap.md                           # 4-phase approach
+│   ├── 02_MVP.md                               # Phase 1 validation
+│   └── ...
+│
+├── 02_implementation_docs/                      # Integration guides
+│   └── Tool_Integration_Requirements.md        # Standards for tool developers
 │
 ├── .agentic_repo_tools/                        # The distributable product
 │   ├── 01_project_agnostic_system/             # Stable, unchanging core
-│   │   ├── procedural_docs/                    # Agent workflows (chronological)
-│   │   └── 02_tools_src/                       # Deterministic tool code (functional org)
-│   │       ├── 00_setup/
-│   │       ├── 01_planning/
-│   │       ├── 02_implementation/
-│   │       ├── 03_testing/
-│   │       └── 04_organization/
+│   │   ├── 01_procedural_docs/                 # Agent workflows (chronological)
+│   │   ├── 02_tools_src/                       # Deterministic tool code (by phase)
+│   │   │   ├── 00_setup/
+│   │   │   │   └── workflow_usage_tracker/     # Session tracking & analytics
+│   │   │   ├── 01_planning/
+│   │   │   ├── 02_implementation/
+│   │   │   ├── 03_testing/
+│   │   │   └── 04_organization/
+│   │   │       └── script_map_and_move/        # Python refactoring tool
+│   │   └── 03_integration_scripts/             # Tool composition workflows
 │   │
-│   └── 02_project_specific_data/            # Generated outputs
+│   └── 02_project_specific_data/               # Project-specific inputs & outputs
 │       ├── 00_setup/
+│       │   └── workflow_usage_tracker/
 │       ├── 01_planning/
 │       ├── 02_implementation/
 │       ├── 03_testing/
 │       └── 04_organization/
+│           └── script_map_and_move/
 │
-└── claude.md                                    # This file
+├── claude.md                                    # This file
+└── README.md                                    # User-facing overview
 ```
 
 ### Key Architectural Decisions
@@ -87,68 +96,93 @@ agentic_repo_tools/                              # This integration repo
 
 ## Current State
 
-### Completed
+### ✅ Completed (Phase 1)
 - ✅ Architecture defined and documented
-- ✅ Directory structure created
+- ✅ Directory structure created with numbered folders
 - ✅ Git repository initialized and pushed to GitHub
-- ✅ Planning doc outlines created (Vision, MVP, Roadmap, Sprint Planning)
-- ✅ Process-step organization chosen for knowledge base
+- ✅ Planning docs completed (Vision, MVP, Roadmap)
+- ✅ Integration requirements documented (`02_implementation_docs/Tool_Integration_Requirements.md`)
+- ✅ Renamed `02_project_specific_outputs/` → `02_project_specific_data/` (clearer naming)
+- ✅ **workflow_usage_tracker** integrated to `00_setup/`
+- ✅ **script_map_and_move** integrated to `04_organization/`
+- ✅ Both tools tested and validated
 
-### In Progress
-- 🔄 Filling in planning documentation
-- 🔄 Defining concrete MVP scope
+### 🎯 Current Focus
+- Dogfooding integrated tools in real projects
+- Documenting lessons learned from integration
+- Identifying next tool candidates
 
-### Next Immediate Actions
-1. Complete Vision.md (define problem, users, value proposition)
-2. Update MVP.md with 4-tool integration plan
-3. Update Immediate Workflow.md to reflect current state
-4. Begin logging tool extraction and cleaning
+### Next Actions
+1. Use workflow_usage_tracker to track future sessions
+2. Apply script_map_and_move in real refactoring scenarios
+3. Identify composition opportunities between tools
+4. Determine Phase 2 tool candidates based on real needs
 
 ---
 
-## MVP Definition
+## Phase 1 Validation - COMPLETE ✅
 
 ### Scope
-The MVP is **not** building new tools—it's proving the integration architecture works by cleaning and organizing existing tools.
+Phase 1 proved the integration architecture works by integrating two complete, production-ready tools.
 
-**Phase 1:** Clean this repo's documentation
-**Phase 2:** Extract and integrate logging tool (first reference implementation)
-**Phase 3:** Integrate auto_move tool
-**Phase 4:** Integrate auto_resize tool
-**Phase 5:** Plan auto_doc tool (future)
+### What We Integrated
 
-### Success Criteria
-- Logging tool runs successfully from `.agentic_repo_tools/` structure
-- Output correctly goes to `02/implementation/`
-- Tool remains usable in its original repo (no breaking changes)
-- Architecture feels helpful, not burdensome
+**1. workflow_usage_tracker** (replaced "logging tool" from original plan)
+- **Location:** `00_setup/workflow_usage_tracker/`
+- **Features:** Cross-project workflow analytics, session tracking, 5 core workflows
+- **Outputs to:** `02_project_specific_data/00_setup/workflow_usage_tracker/`
+- **Dependencies:** Python 3.7+, zero external packages
 
-### Logging Tool Structure (Reference)
-The logging tool already demonstrates the 01/02 pattern:
-- **quick_start/** - entry point scripts (`launch_sprint_session.sh`, `view_sprint_statistics.sh`)
-- **01_src/** - core implementation code
-- **02_logs/** - generated outputs
+**2. script_map_and_move** (replaced "auto_move" from original plan)
+- **Location:** `04_organization/script_map_and_move/`
+- **Features:** Safe Python file refactoring with AST-based import rewriting
+- **Outputs to:** `02_project_specific_data/04_organization/script_map_and_move/`
+- **Dependencies:** Python 3.6+, stdlib only
+- **Tested on:** arrow (23 files, 251 imports), httpie (133 files), rich (190 files)
 
-This proven structure validates our architectural approach.
+### Success Criteria - Met ✅
+- ✅ Both tools run successfully from `.agentic_repo_tools/` structure
+- ✅ Outputs correctly go to `02_project_specific_data/[phase]/[tool_name]/`
+- ✅ Relative path navigation works reliably
+- ✅ 01/02 separation proves valuable (clear agnostic vs project-specific boundary)
+- ✅ Mirrored dev repo structure enables copy-paste integration
+- ✅ Architecture feels helpful, not burdensome
 
 ---
 
-## Tool Integration Sequence
-
-### Priority Order
-1. **logging_tool** - Most complex, serves as reference implementation
-2. **auto_move** - File organization utility
-3. **auto_resize** - File splitting utility
-4. **auto_doc** - Documentation generator (planned)
+## Integration Standards & Lessons Learned
 
 ### Integration Checklist (per tool)
-- [ ] Clean tool in its development repo
-- [ ] Verify tool works standalone
-- [ ] Copy core components to `.agentic_repo_tools/01/tools_src/[phase]/`
-- [ ] Update tool to write outputs to `02/[phase]/`
-- [ ] Create minimal procedural doc (inline or in `procedural_docs/`)
-- [ ] Test tool from integration repo
-- [ ] Document lessons learned
+- ✅ Clean tool in its development repo
+- ✅ Verify tool works standalone
+- ✅ Mirror `.agentic_repo_tools/` structure in dev repo (enables copy-paste)
+- ✅ Use relative path navigation (no hardcoded paths)
+- ✅ Write outputs to `02_project_specific_data/[phase]/[tool_name]/`
+- ✅ Create comprehensive README with usage, inputs, outputs, dependencies
+- ✅ Add `.gitignore` to tool directory (Python cache, OS files, etc.)
+- ✅ Create `.gitkeep` in mirrored output directory (shows structure)
+- ✅ Test tool from integration repo
+- ✅ Document in `02_implementation_docs/Tool_Integration_Requirements.md`
+
+### Key Insights from Phase 1
+
+**What Worked:**
+- Mirrored dev repo structure → copy-paste integration (no path translation)
+- Relative path calculation from script location
+- 01/02 separation provides clear mental model
+- Phase classification by WHEN invoked (not WHAT processed)
+- Comprehensive inline READMEs > centralized procedural docs
+- `.gitkeep` files make mirrored structure visible before first run
+
+**What Changed:**
+- Tool names became more descriptive (logging → workflow_usage_tracker, auto_move → script_map_and_move)
+- Folder naming: `02_project_specific_outputs/` → `02_project_specific_data/` (includes inputs too)
+- Integration requirements doc created to codify standards
+
+**Questions Answered:**
+- ✅ Is 01/02 separation helpful? **YES** - clear boundary, predictable paths
+- ✅ Do relative paths work? **YES** - both tools navigate correctly
+- ✅ Inline vs centralized docs? **INLINE** - comprehensive tool READMEs work better
 
 ---
 
@@ -200,13 +234,15 @@ Chose process-step mirroring instead because:
 
 ---
 
-## Questions to Revisit After MVP
+## Questions for Phase 2
 
-1. **Do relative paths work reliably across different deployment scenarios?**
-2. **Is the 01/02 separation actually helpful or just overhead?**
-3. **Should procedural docs stay separate or merge inline with tools?**
-4. **Does process-step organization scale beyond 4-5 tools?**
-5. **When (if ever) do we need a configuration system instead of hardcoded paths?**
+1. ✅ **Do relative paths work reliably?** → YES, both tools navigate correctly
+2. ✅ **Is the 01/02 separation helpful?** → YES, clear mental model
+3. ✅ **Inline vs centralized docs?** → INLINE comprehensive READMEs work better
+4. ❓ **Does process-step organization scale beyond 2-5 tools?** → TBD in Phase 2
+5. ❓ **When do tools naturally compose?** → Watch for patterns during dogfooding
+6. ❓ **When (if ever) do we need a configuration system?** → Defer until real pain point
+7. ❓ **Should we add MCP integration?** → Validate standalone value first
 
 ---
 
