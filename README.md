@@ -98,12 +98,19 @@ See `01_planning_docs/00_Immediate_To_Do.md` for current progress and `01_planni
 
 ## Development Approach
 
-### Build → Use → Validate → Integrate
+### Feature Branch Workflow
 
-1. **Build tools in separate repos** (keeps development mess contained)
-2. **Use them in real projects** (prove standalone value)
-3. **Validate through dogfooding** (we must actually use what we build)
-4. **Integrate when proven** (copy stable versions to `.agentic_repo_tools/`)
+**New Tool Development:**
+1. **Create feature branch:** `git checkout -b dev/<tool_name>`
+2. **Build tool** at `.agentic_repo_tools/01_composable_elements/01_tools/<tool_name>/`
+3. **Test** using `test_repos/` (01_original → 02_modified copies)
+4. **Merge to main** when stable: `git merge dev/<tool_name>`
+
+**Benefits:**
+- Main branch stays clean (only stable tools)
+- Complete git history preserved
+- Test tools in full repo context
+- Standard industry workflow
 
 ### Phase Progression
 

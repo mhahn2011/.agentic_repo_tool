@@ -2,22 +2,44 @@
 
 **Purpose:** Guidelines for developing tools that integrate cleanly into the Agentic Repo Tools ecosystem.
 
-**Audience:** Tool developers (internal or external) preparing tools for integration into `.agentic_repo_tools/`
+**Audience:** Tool developers preparing tools for integration into `.agentic_repo_tools/`
 
 ---
 
-## Quick Reference: Integration Checklist
+## Development Workflow: Feature Branches
 
-Before submitting a tool for integration, verify:
+**1. Start new tool:**
+```bash
+git checkout -b dev/<tool_name>
+mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/<tool_name>
+```
 
+**2. During development:**
+- Create `01_WIP/` and `02_TEMP/` folders for messy iteration (add to `.gitignore`)
+- Commit freely - all history will be preserved when merged
+- Test using `test_repos/` (copy `01_original/` to `02_modified/`)
+
+**3. Before merge to main:**
+
+**Integration Checklist:**
 - [ ] No hardcoded absolute paths
-- [ ] Outputs write to relative paths: `../../02_project_specific_data/[phase]/[tool_name]/`
+- [ ] Outputs write to relative paths: `../../02_project_specific_data/01_composable_elements/01_tools/<tool_name>/`
 - [ ] Core functionality in organized directory structure
 - [ ] README documents inputs, outputs, and dependencies
 - [ ] Dependencies documented (requirements.txt, package.json, etc.)
 - [ ] CLI entry points clearly documented
-- [ ] Tool tested from its own repo with proper structure
+- [ ] `.gitignore` includes cache files, OS files, `01_WIP/`, `02_TEMP/`
+- [ ] Entry added to `registry.json`
+- [ ] Tool tested using `test_repos/`
+- [ ] `01_WIP/` and `02_TEMP/` folders cleaned up
 - [ ] No required external service dependencies (or clearly documented as optional)
+
+**4. Merge to main:**
+```bash
+git checkout main
+git merge dev/<tool_name>
+git push
+```
 
 ---
 

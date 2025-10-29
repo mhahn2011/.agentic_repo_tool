@@ -15,8 +15,8 @@ This is the **integration hub** for agentic coding tools. It serves as a clean a
 ### Core Principles
 
 1. **Value-first**: Each tool must provide standalone value in real projects NOW
-2. **Separate development repos**: Build/iterate each tool in its own repo (keeps development mess contained)
-3. **This repo = integration hub**: `.agentic_repo_tool` is the clean assembly point, not the workshop
+2. **Feature branch development**: Build/iterate each tool on a feature branch (keeps development mess isolated)
+3. **This repo = integration hub**: Main branch is the clean assembly point where stable tools live
 4. **Mostly-deterministic tools**: Focus on reliable, repeatable utilities (not complex agentic orchestration yet)
 5. **Natural cohesion**: Tools will "work well together" because they share conventions, not because of complex integration code
 
@@ -27,10 +27,17 @@ This is the **integration hub** for agentic coding tools. It serves as a clean a
 
 ### How Tools Flow
 
-1. Each tool lives in its own development repo with README, tests, development history
-2. When a tool is "done enough", copy it into `.agentic_repo_tools/01_project_agnostic_system/02_tools_src/`
-3. This repo documents conventions (how tools should behave, where they write output)
-4. Tools evolve independently; integration repo pulls in stable versions
+1. Create feature branch for new tool development: `git checkout -b dev/<tool_name>`
+2. Develop tool at `.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/<tool_name>/`
+3. Commit freely during development (all history preserved)
+4. When tool is stable, clean up WIP/TEMP files and merge to main: `git merge dev/<tool_name>`
+5. Main branch always contains only stable, tested tools
+
+**Benefits of feature branches:**
+- Preserves complete git history for each tool's evolution
+- Allows testing in full repo context (with pipelines, other tools)
+- Keeps main branch clean and professional
+- Standard industry workflow
 
 ---
 
@@ -163,22 +170,46 @@ Phase 1 proved the integration architecture works by integrating two complete, p
 
 ## Integration Standards & Lessons Learned
 
-### Integration Checklist (per tool)
-- ✅ Clean tool in its development repo
-- ✅ Verify tool works standalone
-- ✅ Mirror `.agentic_repo_tools/` structure in dev repo (enables copy-paste)
-- ✅ Use relative path navigation (no hardcoded paths)
-- ✅ Write outputs to `02_project_specific_data/<tool_name>/`
+### Tool Development Workflow (Feature Branch)
+
+**1. Start new tool:**
+```bash
+git checkout -b dev/<tool_name>
+mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/<tool_name>
+```
+
+**2. Develop tool:**
+- Create `01_WIP/` and `02_TEMP/` folders for messy iteration (gitignore these)
+- Commit freely during development
+- Test using `test_repos/` for validation
+- Use relative path navigation (no hardcoded paths)
+- Write outputs to `02_project_specific_data/01_composable_elements/01_tools/<tool_name>/`
+
+**3. Finalize tool:**
 - ✅ Create comprehensive README with usage, inputs, outputs, dependencies
-- ✅ Add `.gitignore` to tool directory (Python cache, OS files, etc.)
+- ✅ Add `.gitignore` to tool directory (Python cache, OS files, WIP/TEMP folders)
 - ✅ Add entry to `registry.json` with metadata
+- ✅ Clean up `01_WIP/` and `02_TEMP/` folders
 - ✅ Test tool from integration repo
-- ✅ Document in `02_implementation_docs/Tool_Integration_Requirements.md`
+- ✅ Update `02_implementation_docs/Tool_Integration_Requirements.md` if needed
+
+**4. Merge to main:**
+```bash
+git checkout main
+git merge dev/<tool_name>
+git push
+```
+
+**5. Testing:**
+- Use `test_repos/` for validation
+- Copy `01_original/` to `02_modified/` for each test run
+- Reset `02_modified/` between tests for consistency
 
 ### Key Insights from Phase 1
 
 **What Worked:**
-- Mirrored dev repo structure → copy-paste integration (no path translation)
+- Feature branch workflow → keeps main branch clean, preserves history
+- `test_repos/` with `01_original/` and `02_modified/` → easy reset between tests
 - Relative path calculation from script location
 - 01/02 separation provides clear mental model
 - Comprehensive inline READMEs > centralized procedural docs
