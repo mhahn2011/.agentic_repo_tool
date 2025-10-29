@@ -181,7 +181,7 @@ mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/0
 **2. Develop tool:**
 - Create `01_WIP/` and `02_TEMP/` folders for messy iteration (gitignore these)
 - Commit freely during development
-- Test using `test_repos/` for validation
+- Test using `04_test_repos/` for validation
 - Use relative path navigation (no hardcoded paths)
 - Write outputs to `02_project_specific_data/01_composable_elements/01_tools/<tool_name>/`
 
@@ -201,7 +201,7 @@ git push
 ```
 
 **5. Testing:**
-- Use `test_repos/` for validation
+- Use `04_test_repos/` for validation
 - Copy `01_original/` to `02_modified/` for each test run
 - Reset `02_modified/` between tests for consistency
 
@@ -209,7 +209,7 @@ git push
 
 **What Worked:**
 - Feature branch workflow → keeps main branch clean, preserves history
-- `test_repos/` with `01_original/` and `02_modified/` → easy reset between tests
+- `04_test_repos/` with `01_original/` and `02_modified/` → easy reset between tests
 - Relative path calculation from script location
 - 01/02 separation provides clear mental model
 - Comprehensive inline READMEs > centralized procedural docs

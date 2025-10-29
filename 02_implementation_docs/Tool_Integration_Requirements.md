@@ -17,7 +17,7 @@ mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/0
 **2. During development:**
 - Create `01_WIP/` and `02_TEMP/` folders for messy iteration (add to `.gitignore`)
 - Commit freely - all history will be preserved when merged
-- Test using `test_repos/` (copy `01_original/` to `02_modified/`)
+- Test using `04_test_repos/` (copy `01_original/` to `02_modified/`)
 
 **3. Before merge to main:**
 
@@ -30,7 +30,7 @@ mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/0
 - [ ] CLI entry points clearly documented
 - [ ] `.gitignore` includes cache files, OS files, `01_WIP/`, `02_TEMP/`
 - [ ] Entry added to `registry.json`
-- [ ] Tool tested using `test_repos/`
+- [ ] Tool tested using `04_test_repos/`
 - [ ] `01_WIP/` and `02_TEMP/` folders cleaned up
 - [ ] No required external service dependencies (or clearly documented as optional)
 

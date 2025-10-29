@@ -103,7 +103,7 @@ See `01_planning_docs/00_Immediate_To_Do.md` for current progress and `01_planni
 **New Tool Development:**
 1. **Create feature branch:** `git checkout -b dev/<tool_name>`
 2. **Build tool** at `.agentic_repo_tools/01_composable_elements/01_tools/<tool_name>/`
-3. **Test** using `test_repos/` (01_original → 02_modified copies)
+3. **Test** using `04_test_repos/` (01_original → 02_modified copies)
 4. **Merge to main** when stable: `git merge dev/<tool_name>`
 
 **Benefits:**

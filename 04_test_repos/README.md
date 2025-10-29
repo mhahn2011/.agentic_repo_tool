@@ -7,7 +7,7 @@ This directory contains sample repositories for testing toolkit tools.
 Each test repo has two subdirectories:
 
 ```
-test_repos/
+04_test_repos/
 ├── <repo_name>/
 │   ├── 01_original/        # Pristine copy (never modify)
 │   └── 02_modified/        # Working copy for running tests
@@ -22,15 +22,15 @@ test_repos/
 **Testing workflow:**
 ```bash
 # Reset to pristine state
-rm -rf test_repos/arrow/02_modified/*
-cp -r test_repos/arrow/01_original/* test_repos/arrow/02_modified/
+rm -rf 04_test_repos/arrow/02_modified/*
+cp -r 04_test_repos/arrow/01_original/* 04_test_repos/arrow/02_modified/
 
 # Run tool tests on 02_modified/
 .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move/cli/refactor_tool.py \
-  --project test_repos/arrow/02_modified/
+  --project 04_test_repos/arrow/02_modified/
 
 # Inspect results, compare to original
-diff -r test_repos/arrow/01_original/ test_repos/arrow/02_modified/
+diff -r 04_test_repos/arrow/01_original/ 04_test_repos/arrow/02_modified/
 ```
 
 ## Available Test Repos
@@ -43,8 +43,8 @@ Python datetime library with complex import structure
 
 ## Adding New Test Repos
 
-1. Create directory: `mkdir -p test_repos/<repo_name>/{01_original,02_modified}`
-2. Clone into `01_original/`: `git clone <url> test_repos/<repo_name>/01_original`
+1. Create directory: `mkdir -p 04_test_repos/<repo_name>/{01_original,02_modified}`
+2. Clone into `01_original/`: `git clone <url> 04_test_repos/<repo_name>/01_original`
 3. Document in this README
 4. **Important:** Test repos are gitignored - they won't be committed to this repo
 
