@@ -181,7 +181,7 @@ mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/0
 **2. Develop tool:**
 - Create `01_WIP/` and `02_TEMP/` folders for messy iteration (gitignore these)
 - Commit freely during development
-- Test using `04_test_repos/` for validation
+- Test using `03_test_repos/` for validation
 - Use relative path navigation (no hardcoded paths)
 - Write outputs to `02_project_specific_data/01_composable_elements/01_tools/<tool_name>/`
 
@@ -201,15 +201,41 @@ git push
 ```
 
 **5. Testing:**
-- Use `04_test_repos/` for validation
+- Use `03_test_repos/` for validation
 - Copy `01_original/` to `02_modified/` for each test run
 - Reset `02_modified/` between tests for consistency
+
+### Naming Conventions
+
+The repository follows consistent naming conventions for clarity and organization:
+
+**Directory Prefixes:**
+- Numbered prefixes (`01_`, `02_`, `03_`) provide logical ordering
+- `01_` = primary/stable content (capabilities, planning)
+- `02_` = secondary/generated content (outputs, implementation)
+- `03_` = tertiary content (testing infrastructure)
+
+**Development Folders:**
+- `01_WIP/` - Work in progress (experiments, incomplete features)
+- `02_TEMP/` - Temporary files (scratch work, test outputs)
+- Both gitignored, cleaned up before merging to main
+
+**Placeholder Prefixes:**
+- `02_placeholder_commands/` - Future implementation
+- `03_placeholder_agents/` - Future implementation
+- Makes non-functional structure explicit
+
+**Tool Naming:**
+- Descriptive and specific (not generic)
+- Snake_case format
+- Action-oriented when appropriate
+- Examples: `workflow_usage_tracker`, `script_map_and_move`
 
 ### Key Insights from Phase 1
 
 **What Worked:**
 - Feature branch workflow → keeps main branch clean, preserves history
-- `04_test_repos/` with `01_original/` and `02_modified/` → easy reset between tests
+- `03_test_repos/` with `01_original/` and `02_modified/` → easy reset between tests
 - Relative path calculation from script location
 - 01/02 separation provides clear mental model
 - Comprehensive inline READMEs > centralized procedural docs

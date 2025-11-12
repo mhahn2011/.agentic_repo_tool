@@ -17,7 +17,7 @@ mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/0
 **2. During development:**
 - Create `01_WIP/` and `02_TEMP/` folders for messy iteration (add to `.gitignore`)
 - Commit freely - all history will be preserved when merged
-- Test using `04_test_repos/` (copy `01_original/` to `02_modified/`)
+- Test using `03_test_repos/` (copy `01_original/` to `02_modified/`)
 
 **3. Before merge to main:**
 
@@ -30,7 +30,7 @@ mkdir -p .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/0
 - [ ] CLI entry points clearly documented
 - [ ] `.gitignore` includes cache files, OS files, `01_WIP/`, `02_TEMP/`
 - [ ] Entry added to `registry.json`
-- [ ] Tool tested using `04_test_repos/`
+- [ ] Tool tested using `03_test_repos/`
 - [ ] `01_WIP/` and `02_TEMP/` folders cleaned up
 - [ ] No required external service dependencies (or clearly documented as optional)
 
@@ -40,6 +40,106 @@ git checkout main
 git merge dev/<tool_name>
 git push
 ```
+
+---
+
+## Naming Conventions
+
+The repository follows consistent naming conventions to maintain clarity and organization:
+
+### Directory Prefixes
+
+**Numbered Prefixes** - Top-level and nested directories use numbered prefixes for logical ordering:
+- `01_` - Primary/stable content (capabilities, planning docs)
+- `02_` - Secondary/generated content (outputs, implementation docs)
+- `03_` - Tertiary content (test infrastructure)
+
+**Examples:**
+```
+01_planning_docs/          # Planning documentation
+02_implementation_docs/    # Implementation guides
+03_test_repos/             # Testing infrastructure
+```
+
+**Nested structure mirrors numbering:**
+```
+.agentic_repo_tools/
+├── 01_project_agnostic_system/
+│   ├── 01_composable_elements/
+│   │   ├── 01_tools/
+│   │   ├── 02_placeholder_commands/
+│   │   └── 03_placeholder_agents/
+│   └── 02_pipelines/
+└── 02_project_specific_data/
+    ├── 01_composable_elements/
+    │   └── 01_tools/
+    └── 02_pipelines/
+```
+
+### Development Folder Prefixes
+
+**WIP/TEMP Convention** - During tool development, use these prefixes for temporary work:
+- `01_WIP/` - Work in progress (experiments, drafts, incomplete features)
+- `02_TEMP/` - Temporary files (scratch work, test outputs, one-off scripts)
+
+**Important:**
+- Both folders should be in `.gitignore`
+- Clean up before merging to main
+- Never commit WIP/TEMP folders to main branch
+
+**Example during development:**
+```
+01_tools/
+└── my_tool/
+    ├── 01_WIP/           # Gitignored - experiments
+    ├── 02_TEMP/          # Gitignored - scratch work
+    ├── cli/              # Production code
+    ├── src/              # Production code
+    └── README.md         # Production docs
+```
+
+### Placeholder Prefixes
+
+**Placeholder Convention** - Folders/files not yet implemented use `placeholder_` prefix:
+- `02_placeholder_commands/` - Commands will be implemented in Phase 2+
+- `03_placeholder_agents/` - Agents will be implemented in Phase 2+
+
+This makes it explicit that the structure exists for architectural completeness but isn't functional yet.
+
+### Planning Document Numbering
+
+**Markdown files in `01_planning_docs/` use numbered prefixes for logical flow:**
+- `00_` - Immediate/current focus (Vision, Immediate To-Do)
+- `01_` - Strategic planning (Roadmap)
+- `02_` - Tactical planning (MVP)
+- `03_` - Reference catalogs (Tool Catalog)
+- `04_` - Historical/meta (Integration Log, Future Orchestration)
+- `05_` - Retrospective (Lessons Learned)
+
+**Example:**
+```
+01_planning_docs/
+├── 00_Vision.md
+├── 00_Immediate_To_Do.md
+├── 01_Roadmap.md
+├── 02_MVP.md
+├── 03_Tool_Catalog.md
+├── 04_Integration_Log.md
+└── 05_Lessons_Learned.md
+```
+
+### Tool Naming
+
+**Tool names should be:**
+- Descriptive and specific (not generic)
+- Snake_case format
+- Action-oriented when appropriate
+
+**Good examples:**
+- `workflow_usage_tracker` (not "logging_tool")
+- `script_map_and_move` (not "auto_move")
+
+**Why:** Specific names better reflect actual functionality and prevent naming conflicts.
 
 ---
 
