@@ -1,6 +1,8 @@
-# Agent Definitions
+# Placeholder: Agent Definitions
 
 Agent role definitions for agentic workflows and pipeline orchestration.
+
+**Status:** Future implementation - Phase 2+
 
 ## Purpose
 

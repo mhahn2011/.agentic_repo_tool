@@ -65,8 +65,8 @@ agentic_repo_tools/                              # This integration repo
 │   │   │   │   ├── workflow_usage_tracker/
 │   │   │   │   ├── script_map_and_move/
 │   │   │   │   └── registry.json
-│   │   │   ├── 02_commands/                    # Claude Code slash commands
-│   │   │   └── 03_agents/                      # Agent role definitions
+│   │   │   ├── 02_placeholder_commands/        # Claude Code slash commands (future)
+│   │   │   └── 03_placeholder_agents/          # Agent role definitions (future)
 │   │   ├── 01_procedural_docs/                 # General SOPs (placeholder)
 │   │   └── 02_pipelines/                       # Multi-step workflows
 │   │       └── refactor_with_tracking/
@@ -76,7 +76,7 @@ agentic_repo_tools/                              # This integration repo
 │       │   ├── 01_tools/
 │       │   │   ├── workflow_usage_tracker/
 │       │   │   └── script_map_and_move/
-│       │   └── 02_commands/
+│       │   └── 02_placeholder_commands/
 │       └── 02_pipelines/
 │
 ├── claude.md                                    # This file
@@ -110,8 +110,8 @@ agentic_repo_tools/                              # This integration repo
 - ✅ Architecture defined and documented
 - ✅ **Composable elements architecture** implemented
   - 01_tools/ (deterministic utilities)
-  - 02_commands/ (slash commands for orchestration)
-  - 03_agents/ (agent role definitions)
+  - 02_placeholder_commands/ (slash commands for orchestration - future)
+  - 03_placeholder_agents/ (agent role definitions - future)
   - 02_pipelines/ (multi-step workflows)
 - ✅ Git repository initialized and pushed to GitHub
 - ✅ Planning docs completed (Vision, MVP, Roadmap)
@@ -344,8 +344,7 @@ These principles guide our architectural decisions and development process:
 
 ## References
 
-- **Primary docs**: `agentic_repo_tools_structure.md`, `agentic_tools_brainstorming.md`
-- **Review doc**: `Temp.md` (captures architectural review and recommendations)
-- **Planning docs**: `planning_docs/` folder
-- **Progress tracking**: `progress_tracking/` folder
+- **Planning docs**: `01_planning_docs/` folder (vision, roadmap, tool catalog, integration log, lessons learned)
+- **Implementation docs**: `02_implementation_docs/` folder (integration standards, technical guides)
+- **Testing infrastructure**: `03_test_repos/` folder
 - **GitHub repo**: https://github.com/mhahn2011/.agentic_repo_tool

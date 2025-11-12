@@ -9,14 +9,20 @@ This folder contains strategic and operational planning for the integration repo
 ### Operational (Start Here)
 - **[00_Immediate_To_Do.md](00_Immediate_To_Do.md)** - What to do right now (operational scratchpad)
 
-### Strategic Planning
+### Strategic Planning (Forward-Looking)
 - **[00_Vision.md](00_Vision.md)** - Problem, opportunity, foundational principles, and overall approach
 - **[01_Roadmap.md](01_Roadmap.md)** - 4 pragmatic phases with decision gates
 - **[02_MVP.md](02_MVP.md)** - First tool validation scope and success criteria
 
 ### Reference & Inventory
-- **[03_Tool_Catalog.md](03_Tool_Catalog.md)** - Comprehensive tool inventory by phase + deterministic backlog
+- **[03_Tool_Catalog.md](03_Tool_Catalog.md)** - Comprehensive tool inventory + deterministic backlog
 - **[04_Future_Agentic_Orchestration.md](04_Future_Agentic_Orchestration.md)** - Phase 4 experimental designs + agentic feature backlog
+
+### Execution & Learnings (Backward-Looking)
+- **[04_Integration_Log.md](04_Integration_Log.md)** - Chronological record of tool integrations and milestones
+- **[05_Lessons_Learned.md](05_Lessons_Learned.md)** - Synthesized insights from integration experience
+
+### Technical Reference
 - **[../.agentic_repo_tools/ARCHITECTURE.md](../.agentic_repo_tools/ARCHITECTURE.md)** - Technical architecture of the toolkit
 
 ---
@@ -33,13 +39,16 @@ This folder contains strategic and operational planning for the integration repo
 → Check `01_Roadmap.md` for 4-phase implementation plan
 
 **Validating Phase 1 progress?**
-→ Review `02_MVP.md` success criteria
+→ Review `02_MVP.md` success criteria and `04_Integration_Log.md` for what we've completed
 
 **Looking up tool details?**
 → See `03_Tool_Catalog.md` for comprehensive inventory
 
 **Planning Phase 4 experiments?**
 → See `04_Future_Agentic_Orchestration.md` for experimental designs
+
+**Understanding what we learned?**
+→ See `05_Lessons_Learned.md` for insights from integration experience
 
 ---
 
@@ -60,6 +69,8 @@ Therefore:
 
 - **Vision** - Update when strategy shifts
 - **Roadmap** - Update after completing phases
-- **MVP** - Keep stable (reference point)
+- **MVP** - Keep stable (Phase 1 reference point)
 - **Tool Catalog** - Update as tools integrate
-- **Next Steps** - Update frequently (operational scratchpad)
+- **Integration Log** - Update after each tool integration or major milestone
+- **Lessons Learned** - Update after completing phases or major learnings
+- **Immediate To-Do** - Update frequently (operational scratchpad)

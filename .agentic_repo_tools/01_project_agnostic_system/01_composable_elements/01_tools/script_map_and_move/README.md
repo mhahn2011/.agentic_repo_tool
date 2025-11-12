@@ -2,14 +2,7 @@
 
 **Purpose:** Safely move Python files while automatically updating all import statements and configuration references across the codebase.
 
-**Phase:** `04_organization` (Used during code cleanup and refactoring activities)
-
-## Why This Phase?
-
-This tool is placed in `04_organization/` because:
-- Invoked during cleanup and refactoring activities (after implementation is complete)
-- Reorganizes code structure without changing functionality
-- Part of the organization/maintenance workflow, not active development
+**Status:** ✅ Production ready
 
 ## Features
 
@@ -26,7 +19,7 @@ This tool is placed in `04_organization/` because:
 
 ```bash
 # Navigate to the tool
-cd .agentic_repo_tools/01_project_agnostic_system/02_tools_src/04_organization/script_map_and_move
+cd .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move
 
 # Run with dry-run to preview changes
 python3 cli/refactor_tool.py --plan /path/to/your/refactor_plan.json --dry-run
@@ -39,7 +32,7 @@ python3 cli/refactor_tool.py --plan /path/to/your/refactor_plan.json
 
 ```bash
 # Run directly from project root
-python3 .agentic_repo_tools/01_project_agnostic_system/02_tools_src/04_organization/script_map_and_move/cli/refactor_tool.py \
+python3 .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move/cli/refactor_tool.py \
   --plan refactor_plan.json \
   --root .
 ```
@@ -52,7 +45,7 @@ python3 .agentic_repo_tools/01_project_agnostic_system/02_tools_src/04_organizat
 
 **Recommended location:** Create your refactor plan in the project-specific data directory:
 ```
-../../../../../../02_project_specific_data/04_organization/script_map_and_move/my_refactor_plan.json
+../../../../../../02_project_specific_data/01_composable_elements/01_tools/script_map_and_move/my_refactor_plan.json
 ```
 
 **Format:**
@@ -86,7 +79,7 @@ Copy an example to the `02_project_specific_data/` directory and customize it fo
 
 **All outputs are automatically saved to:**
 ```
-../../../../../../02_project_specific_data/04_organization/script_map_and_move/
+../../../../../../02_project_specific_data/01_composable_elements/01_tools/script_map_and_move/
 ```
 
 ### Generated Files
@@ -223,7 +216,7 @@ python3 cli/refactor_tool.py --plan refactor_plan.json --root /path/to/project -
 python3 cli/refactor_tool.py --plan refactor_plan.json --root /path/to/project
 
 # 4. Review outputs
-ls ../../../../../../02_project_specific_data/04_organization/script_map_and_move/
+ls ../../../../../../02_project_specific_data/01_composable_elements/01_tools/script_map_and_move/
 
 # 5. If needed, rollback using git
 cd /path/to/project
@@ -239,17 +232,13 @@ See `LIMITATIONS.md` for known limitations, including:
 - Non-Python files not scanned or updated
 - Import statements in comments or strings not updated
 
-## Phase Classification Reasoning
+## Usage Pattern
 
-**Q: Why organization phase and not implementation?**
-
-**A:** Developer workflow consideration:
-- Developer invokes tool AFTER code is functionally complete
-- Used for cleanup, reorganization, and maintenance
-- Not part of active feature development
-- Specific to refactoring activities, not ongoing coding
-
-If this tool logged implementation work, it would go in `00_setup/` (cross-phase infrastructure). But since it performs reorganization work, it belongs in `04_organization/`.
+This tool is typically used:
+- **After code is functionally complete** - reorganizing without changing behavior
+- **During cleanup and refactoring** - improving code structure and maintainability
+- **For large-scale reorganizations** - moving multiple files while preserving imports
+- **When restructuring packages** - safely updating module hierarchies
 
 ---
 

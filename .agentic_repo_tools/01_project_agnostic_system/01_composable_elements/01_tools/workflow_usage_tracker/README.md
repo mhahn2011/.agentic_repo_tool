@@ -1,10 +1,8 @@
 # Workflow Usage Tracker
 
-**Phase:** `00_setup` (Session initialization tool)
-
 **Purpose:** Track and analyze Claude Code usage by workflow type across all projects
 
-**Status:** ✅ Integration-ready
+**Status:** ✅ Production ready
 
 ## Overview
 
@@ -36,27 +34,27 @@ Categorize Claude Code sessions by workflow type (brainstorming, planning, imple
 cd /path/to/project
 
 # Launch by workflow type
-.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_brainstorming.sh
-.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_implementation.sh
+.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_brainstorming.sh
+.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_implementation.sh
 # etc.
 ```
 
 ### View Analytics
 
 ```bash
-.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/view_workflow_stats.sh
+.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/view_workflow_stats.sh
 ```
 
 ### Recommended: Create Aliases
 
 Add to `~/.zshrc`:
 ```bash
-alias brainstorm='/path/to/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_brainstorming.sh'
-alias plan='/path/to/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_planning.sh'
-alias code='/path/to/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_implementation.sh'
-alias refactor='/path/to/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_refactoring.sh'
-alias document='/path/to/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/launch_documentation.sh'
-alias workflow-stats='/path/to/.agentic_repo_tools/01_project_agnostic_system/02_tools_src/00_setup/workflow_usage_tracker/cli/view_workflow_stats.sh'
+alias brainstorm='/path/to/.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_brainstorming.sh'
+alias plan='/path/to/.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_planning.sh'
+alias code='/path/to/.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_implementation.sh'
+alias refactor='/path/to/.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_refactoring.sh'
+alias document='/path/to/.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_documentation.sh'
+alias workflow-stats='/path/to/.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/view_workflow_stats.sh'
 ```
 
 Then use from any project:
@@ -101,7 +99,7 @@ Metadata written to (by default):
 
 Project-local backup (mirrors 01/ structure):
 ```
-.agentic_repo_tools/02_project_specific_data/00_setup/workflow_usage_tracker/
+.agentic_repo_tools/02_project_specific_data/01_composable_elements/01_tools/workflow_usage_tracker/
 └── metadata.json
 ```
 
@@ -133,16 +131,14 @@ Project-local backup (mirrors 01/ structure):
 4. **After exit**, script associates Claude session UUID with metadata
 5. **Analytics viewer** aggregates data across all projects by workflow type
 
-## Phase Classification
+## Usage Pattern
 
-**Why `00_setup`?**
+This tool is **session-oriented** rather than phase-specific:
 
-- Launched **once** at session start (not repeatedly)
-- Runs across **all phases** (captures planning, implementation, testing, etc.)
-- **Infrastructure tool**, not phase-specific activity
-- Similar to environment setup or session initialization
-
-**Not** `02_implementation` because it's not invoked during coding—it's invoked before starting any work.
+- Launched **once** at session start (before any development work)
+- Tracks work across **all workflow types** (brainstorming, planning, implementation, refactoring, documentation)
+- **Infrastructure tool** that categorizes sessions by workflow type
+- Provides cross-project analytics after sessions complete
 
 ## Documentation
 
@@ -152,4 +148,4 @@ Project-local backup (mirrors 01/ structure):
 
 ---
 
-**Integration Status:** Ready for copying to `.agentic_repo_tools/01.../00_setup/workflow_usage_tracker/`
+**Tool Status:** Production ready • Zero external dependencies • Cross-platform

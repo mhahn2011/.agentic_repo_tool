@@ -26,8 +26,8 @@ agentic_repo_tools/
 │   │   │   │   ├── workflow_usage_tracker/
 │   │   │   │   ├── script_map_and_move/
 │   │   │   │   └── registry.json
-│   │   │   ├── 02_commands/          # Claude Code slash commands
-│   │   │   └── 03_agents/            # Agent role definitions
+│   │   │   ├── 02_placeholder_commands/  # Claude Code slash commands (future)
+│   │   │   └── 03_placeholder_agents/    # Agent role definitions (future)
 │   │   ├── 01_procedural_docs/       # General SOPs (placeholder)
 │   │   └── 02_pipelines/             # Multi-step workflows
 │   │       └── refactor_with_tracking/
@@ -37,7 +37,7 @@ agentic_repo_tools/
 │   │   │   ├── 01_tools/
 │   │   │   │   ├── workflow_usage_tracker/
 │   │   │   │   └── script_map_and_move/
-│   │   │   └── 02_commands/          # Command outputs (if any)
+│   │   │   └── 02_placeholder_commands/  # Command outputs (if any)
 │   │   └── 02_pipelines/             # Pipeline execution results
 │   │
 │   └── ARCHITECTURE.md               # Technical architecture reference
@@ -49,10 +49,16 @@ agentic_repo_tools/
 │   ├── 02_MVP.md                     # First validation checkpoint
 │   ├── 03_Tool_Catalog.md            # Comprehensive tool inventory
 │   ├── 04_Future_Agentic_Orchestration.md  # Phase 4 experimental designs
+│   ├── 04_Integration_Log.md         # Chronological record of integrations
+│   ├── 05_Lessons_Learned.md         # Synthesized insights from experience
 │   └── README.md                     # Planning docs navigation
 │
 ├── 02_implementation_docs/           # Integration guides and standards
-│   └── Tool_Integration_Requirements.md  # Standards for integration-ready tools
+│   ├── Tool_Integration_Requirements.md  # Standards for integration-ready tools
+│   └── README.md                     # Implementation docs navigation
+│
+├── 03_test_repos/                    # Test repositories for validation
+│   └── README.md                     # Testing infrastructure guide
 │
 ├── claude.md                         # Claude Code context (design principles, strategy)
 └── README.md                         # This file
@@ -89,8 +95,10 @@ We build deterministic scaffolding first, layer in agentic components where reas
 **Phase 1:** ✅ Complete (Two tools integrated, architecture validated)
 
 ### Integrated Tools
-- **workflow_usage_tracker** (`00_setup/`) - Cross-project workflow analytics and session tracking
-- **script_map_and_move** (`04_organization/`) - Safe Python file refactoring with automatic import updates
+- **workflow_usage_tracker** - Cross-project workflow analytics and session tracking
+- **script_map_and_move** - Safe Python file refactoring with automatic import updates
+
+Both tools are located in `.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/`
 
 See `01_planning_docs/00_Immediate_To_Do.md` for current progress and `01_planning_docs/01_Roadmap.md` for detailed phases.
 
@@ -175,7 +183,7 @@ This is currently a personal project validating an integration pattern. External
 
 ## License
 
-TBD (to be determined after MVP validation)
+MIT License - see [LICENSE](LICENSE) file for details
 
 ---
 

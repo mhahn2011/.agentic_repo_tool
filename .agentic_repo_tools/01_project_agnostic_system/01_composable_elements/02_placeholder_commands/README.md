@@ -1,6 +1,8 @@
-# Slash Commands
+# Placeholder: Slash Commands
 
 Claude Code slash commands for pipeline orchestration and workflow invocation.
+
+**Status:** Future implementation - Phase 2+
 
 ## Purpose
 
@@ -53,7 +55,7 @@ Launch refactoring session using workflow_usage_tracker
 ## Outputs
 
 Some commands may generate outputs in:
-`../../02_project_specific_data/01_composable_elements/02_commands/`
+`../../02_project_specific_data/01_composable_elements/02_placeholder_commands/`
 
 ## Registry
 

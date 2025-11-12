@@ -7,37 +7,36 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 ## Directory Structure
 
 ```
-.agentic_repo_tools/                   # The distributable toolkit
+.agentic_repo_tools/                        # The distributable toolkit
 │
-├── 01_project_agnostic_system/  # Stable, reusable capabilities
+├── 01_project_agnostic_system/             # Stable, reusable capabilities
 │   │
-│   ├── 01_procedural_docs/            # Agent workflows (chronological organization)
-│   │   └── Stage_X/
-│   │       └── Task_X/
-│   │           ├── Agent_Instructions.md
-│   │           └── Task-Specific-Agent-Definition-Doc.md
+│   ├── 01_composable_elements/             # Building blocks for workflows
+│   │   ├── 01_tools/                       # Deterministic utilities
+│   │   │   ├── workflow_usage_tracker/     # Session tracking & analytics
+│   │   │   ├── script_map_and_move/        # Python refactoring tool
+│   │   │   └── registry.json               # Tool metadata & discovery
+│   │   │
+│   │   ├── 02_placeholder_commands/        # Claude Code slash commands (future)
+│   │   │   └── README.md                   # Placeholder documentation
+│   │   │
+│   │   └── 03_placeholder_agents/          # Agent role definitions (future)
+│   │       └── README.md                   # Placeholder documentation
 │   │
-│   ├── 02_tools_src/                  # Tool source code (functional organization)
-│   │   ├── 00_setup/
-│   │   ├── 01_planning/
-│   │   ├── 02_implementation/
-│   │   ├── 03_testing/
-│   │   └── 04_organization/
-│   │
-│   └── 03_integration_scripts/        # Cross-phase workflow compositions
-│       ├── refactor_workflow.sh       # Example: size_linter → auto_resize → auto_move
-│       ├── doc_sync_workflow.sh       # Example: metadata_extractor → auto_doc
-│       └── README.md
+│   └── 02_pipelines/                       # Multi-step workflow compositions
+│       └── refactor_with_tracking/         # (future: example pipeline)
 │
-├── 02_project_specific_data/  # Generated outputs (gitignored in consumer projects)
-│   ├── 00_setup/                      # Setup artifacts
-│   ├── 01_planning/                   # Planning deliverables
-│   ├── 02_implementation/             # Code logs, commit metadata
-│   ├── 03_testing/                    # Test results, coverage
-│   └── 04_organization/               # Refactor logs, move history
+├── 02_project_specific_data/               # Generated outputs (gitignored in projects)
+│   ├── 01_composable_elements/             # Element-specific outputs
+│   │   ├── 01_tools/                       # Tool outputs (mirrored structure)
+│   │   │   ├── workflow_usage_tracker/
+│   │   │   └── script_map_and_move/
+│   │   └── 02_placeholder_commands/        # Command outputs (future)
+│   │
+│   └── 02_pipelines/                       # Pipeline execution results
 │
-├── ARCHITECTURE.md                    # This file
-└── README.md                          # Usage and quick start
+├── ARCHITECTURE.md                         # This file
+└── README.md                               # User guide and quick start
 ```
 
 ---
@@ -46,107 +45,156 @@ This document describes the technical architecture of the `.agentic_repo_tools/`
 
 ### 01/ vs 02/ Separation
 
-**01_project_agnostic_system** = **Capabilities** (stable, version-controlled, shared across projects)
-- Procedural docs (workflows)
-- Tool source code
-- Integration scripts
+**01_project_agnostic_system** = **Capabilities** (stable, version-controlled, distributed)
+- Composable elements (tools, commands, agents)
+- Pipelines (multi-step workflows)
+- Source code and definitions
 
-**02_project_specific_data** = **State** (generated per-project, gitignored, evolves during development)
+**02_project_specific_data** = **State** (generated per-project, gitignored, ephemeral)
 - Tool outputs
-- Logs and metrics
+- Execution logs
 - Project-specific artifacts
 
-This separation ensures a clear boundary: **what the system can do** vs **what it learns/generates**.
+This separation ensures a clear boundary: **what the system can do** vs **what it generates**.
 
-### Integration Scripts
+### Composable Elements Architecture
 
-Integration scripts orchestrate multiple tools without tight coupling:
-- Tools write to predictable `02/[phase]/[output_type]/` locations
-- Scripts read from these locations and chain tools together
-- Workflows are explicit, reusable, and debuggable
-- Scripts serve as prototypes for future MCP tool implementations
+Building blocks organized by type and purpose:
 
-**Example:** `refactor_workflow.sh` chains `size_linter → auto_resize → auto_move → test_runner`
+**Tools (`01_tools/`)** - Deterministic utilities
+- Self-contained scripts (Python, bash)
+- Discoverable via `registry.json`
+- Write outputs to mirrored `02/` locations
+- Examples: workflow_usage_tracker, script_map_and_move
 
----
+**Commands (`02_placeholder_commands/`)** - Orchestration interfaces (future)
+- Claude Code slash commands
+- Invoke tools and agents
+- Provide user-friendly workflows
+- Currently placeholder - will be implemented in Phase 2+
 
-## Knowledge Base Organization
+**Agents (`03_placeholder_agents/`)** - Reasoning workflows (future)
+- Role definitions for agentic tasks
+- Invoked through commands (not directly)
+- Combine tools with reasoning
+- Currently placeholder - will be implemented in Phase 2+
 
-### Process-Step Mirroring
-`02_project_specific_data/` mirrors the functional phases in `01/02_tools_src/` for intuitive navigation:
-- Setup tools (00_setup) → `00_setup/` outputs
-- Planning tools (01_planning) → `01_planning/` outputs
-- Implementation tools (02_implementation) → `02_implementation/` outputs
-- Testing tools (03_testing) → `03_testing/` outputs
-- Organization tools (04_organization) → `04_organization/` outputs
+**Pipelines (`02_pipelines/`)** - Complete workflows
+- Multi-step compositions
+- Chain tools, commands, and agents
+- Examples: refactor_with_tracking
+- *(Future: validated pipeline templates)*
 
-### Predictable Paths
-Tools write outputs using relative paths:
-```bash
-../../02_project_specific_data/02_implementation/logs/
-```
+### Composition Model
 
-Integration scripts read from these predictable locations:
-```bash
-size_linter > 02/04_organization/large_files.json
-auto_resize --input=02/04_organization/large_files.json
-```
+**How elements work together:**
+1. **Tools** provide deterministic functionality
+2. **Commands** orchestrate and invoke agents
+3. **Agents** reason through commands (never invoked directly)
+4. **Pipelines** compose all elements into workflows
 
-### Future-Proofing
-If database migration becomes necessary, a migration script can reorganize `02/` data without changing tool interfaces or workflows.
+**Design principle:** Commands invoke agents, agents work through tools/commands.
 
 ---
 
 ## Tool Organization
 
-### Functional Decomposition (02_tools_src/)
-Tools organized by development phase:
-1. **00_setup/** – Configuration, environment initialization
-2. **01_planning/** – MVP definition, sprint planning
-3. **02_implementation/** – Coding, commits, logging
-4. **03_testing/** – Validation, coverage, regression
-5. **04_organization/** – Refactoring, documentation, file management
+### Flat Structure with Registry
 
-### Chronological Organization (01_procedural_docs/)
-Agent workflows organized by execution sequence, not function. A workflow may reference tools from multiple phases.
+Tools are organized in a **flat directory structure** rather than phase-based hierarchy:
 
-### Cross-Phase Composition (03_integration_scripts/)
-Workflows that span multiple phases (e.g., organization → testing → implementation).
+```
+01_tools/
+├── workflow_usage_tracker/
+├── script_map_and_move/
+└── registry.json
+```
+
+**Why flat?**
+- Tools often span multiple workflow phases
+- Registry-based discovery is more flexible
+- No forced categorization decisions
+- Easier to maintain and navigate
+
+**registry.json** provides:
+- Tool metadata (name, description, version)
+- Entry points and dependencies
+- Category tags (if needed)
+- Machine-parsable discovery
+
+### Mirrored Output Structure
+
+`02_project_specific_data/` mirrors `01_project_agnostic_system/` structure:
+
+```
+01_composable_elements/01_tools/workflow_usage_tracker/
+→ 02_project_specific_data/01_composable_elements/01_tools/workflow_usage_tracker/
+```
+
+**Benefits:**
+- Predictable output locations
+- Easy to find tool artifacts
+- Clear separation of capabilities and state
+- Consistent across all tools
 
 ---
 
-## Deployment and Usage
+## Integration and Deployment
 
 ### Integrating into a Project
 
-1. **Clone toolkit into target project:**
-   ```bash
-   cd /path/to/your/project
-   git clone <toolkit-repo> .agentic_repo_tools
-   ```
+**Option 1: Clone entire toolkit**
+```bash
+cd /path/to/your/project
+git clone <toolkit-repo-url> .agentic_repo_tools
+```
 
-2. **Gitignore generated outputs:**
-   ```
-   # .gitignore
-   .agentic_repo_tools/02_project_specific_data/
-   ```
+**Option 2: Git submodule**
+```bash
+cd /path/to/your/project
+git submodule add <toolkit-repo-url> .agentic_repo_tools
+```
 
-3. **Run tools:**
-   ```bash
-   .agentic_repo_tools/01_project_agnostic_system/02_tools_src/02_implementation/logging_tool/launch_sprint_session.sh
-   ```
+**Option 3: Copy toolkit directory**
+```bash
+cp -r /path/to/toolkit/.agentic_repo_tools /path/to/your/project/
+```
 
-4. **Run integration workflows:**
-   ```bash
-   .agentic_repo_tools/01_project_agnostic_system/03_integration_scripts/refactor_workflow.sh
-   ```
+### Gitignore Configuration
+
+Add to your project's `.gitignore`:
+```
+# Agentic tools - ignore generated outputs
+.agentic_repo_tools/02_project_specific_data/
+```
+
+**Note:** Keep `01_project_agnostic_system/` tracked to version control toolkit capabilities.
+
+### Running Tools
+
+Tools use **relative path navigation** - they work from any location:
+
+```bash
+# From anywhere in your project
+.agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/workflow_usage_tracker/cli/launch_brainstorming.sh
+
+# Or from tool directory
+cd .agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move
+python3 cli/refactor_tool.py --plan /path/to/plan.json
+```
 
 ### Updating the Toolkit
 
-- **Development:** Occurs in dedicated toolkit repo (not within consumer projects)
-- **Updates:** Pull latest toolkit changes into consumer projects
-- **01/ remains immutable** in consumer projects during use
-- **02/ is project-specific** and not synchronized across projects
+**Development workflow:**
+1. Develop tools in integration repo on feature branches
+2. Merge to main when stable
+3. Pull updates into consumer projects
+
+**In consumer projects:**
+```bash
+cd .agentic_repo_tools
+git pull origin main
+```
 
 ---
 
@@ -154,28 +202,67 @@ Workflows that span multiple phases (e.g., organization → testing → implemen
 
 **Separation of concerns:**
 - Capabilities (01/) separate from state (02/)
-- Tools separate from workflows (02_tools_src vs 03_integration_scripts)
-- Functional organization (tools) vs chronological (procedures)
+- Tools provide functions, pipelines compose them
+- Each element type has a clear role
 
 **Predictability:**
-- Tools write to documented locations
-- Output paths are consistent across projects
-- Integration scripts rely on these guarantees
+- Tools write to documented, mirrored locations
+- Registry provides machine-parsable discovery
+- Consistent patterns across all elements
 
 **Composability:**
 - Small tools that do one thing well
-- Integration scripts combine tools
-- No tight coupling between tools
+- Pipelines combine tools without tight coupling
+- Commands orchestrate without hardcoded dependencies
+
+**Portability:**
+- Relative paths work from any location
+- No hardcoded absolute paths
+- Works across different projects and environments
 
 **Trust:**
 - Tools support `--dry-run` mode
 - Changes are reversible (git-tracked)
 - Transparent logging of all actions
+- Clear documentation of inputs/outputs
+
+---
+
+## Tool Development Standards
+
+### Integration Checklist
+
+Tools ready for integration must have:
+
+✅ **No hardcoded paths** - All paths relative from script location
+✅ **Outputs to 02/** - Follows 01/02 separation
+✅ **README complete** - Usage, inputs, outputs, dependencies documented
+✅ **Dependencies documented** - Clear version requirements
+✅ **CLI documented** - All entry points listed
+✅ **Tested** - Validated in real projects
+✅ **Portable** - Works from integration location
+✅ **Registry entry** - Metadata in `registry.json`
+✅ **Gitignore** - Python cache, OS files, temp folders excluded
+
+### Directory Structure Per Tool
+
+```
+tool_name/
+├── README.md                    # Comprehensive usage guide
+├── .gitignore                   # Exclude cache, temp, OS files
+├── cli/                         # Command-line entry points
+├── lib/ or src/                 # Core functionality
+├── config/                      # Configuration files (if needed)
+├── examples/                    # Example inputs/outputs
+└── docs/                        # Additional documentation
+```
 
 ---
 
 ## For More Information
 
-- **Strategic planning:** See toolkit development repo `01_planning_docs/`
-- **Implementation roadmap:** See `01_planning_docs/01_Roadmap.md`
-- **Tool catalog:** See `01_planning_docs/03_Tool_Catalog.md`
+- **Strategic planning:** `/01_planning_docs/` in integration repo
+- **Tool integration standards:** `/02_implementation_docs/Tool_Integration_Requirements.md`
+- **Development workflow:** `/claude.md` (Claude Code context)
+- **Tool catalog:** `/01_planning_docs/03_Tool_Catalog.md`
+- **Testing infrastructure:** `/04_test_repos/README.md`

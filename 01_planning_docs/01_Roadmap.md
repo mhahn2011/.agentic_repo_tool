@@ -79,6 +79,12 @@ Each phase has a clear go/no-go decision. Don't proceed unless the previous phas
 - **Go to Phase 3 if:** 3-5 tools prove genuinely useful, we use them regularly, structure feels natural
 - **No-Go if:** Tools sit unused, integration feels burdensome, or we're forcing it
 
+**Testing Infrastructure Decision (Phase 2 → 3 transition):**
+- **Evaluate:** Has manual testing become tedious or error-prone with 5+ tools?
+- **If Yes:** Add pytest + automated tests for tool validation before Phase 3
+- **If No:** Continue manual testing, revisit after Phase 3
+- **Criteria:** Time spent on manual validation > time to write automated tests
+
 **What we're really testing:** Do these tools solve real problems, or just theoretical ones?
 
 ---
