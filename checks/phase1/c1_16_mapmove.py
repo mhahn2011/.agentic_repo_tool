@@ -15,12 +15,12 @@ if not TOOL.exists():
     finish(False, f"tool not found: {TOOL}")
 sh(RESET)
 plan = Path(tempfile.mkdtemp()) / "plan.json"
-plan.write_text(json.dumps({"moves": [{"from": "arrow/util.py", "to": "arrow/helpers/util.py"}]}), encoding="utf-8")
+plan.write_text(json.dumps({"moves": [{"from": "arrow/constants.py", "to": "arrow/core/constants.py"}]}), encoding="utf-8")
 rc, out = sh([PY, str(TOOL), "--plan", str(plan), "--root", str(FX), "--dry-run", "--yes"])
 _, st = sh(["git", "-C", str(FX), "status", "--porcelain"])
 if rc != 0 or st.strip():
     problems.append(f"dry run rc={rc}, status={st.strip()[:200]}")
-rc, out = sh([PY, str(TOOL), "--plan", str(plan), "--root", str(FX), "--yes"])
+rc, out = sh([PY, str(TOOL), "--plan", str(plan), "--root", str(FX), "--yes", "--no-commit"])
 if rc != 0:
     problems.append(f"real move rc={rc}: {out[-300:]}")
 p = pins()["arrow"]

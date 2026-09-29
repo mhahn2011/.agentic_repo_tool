@@ -1,0 +1,28 @@
+{
+  "_note": "Pinned fixtures for E-008. Rule: latest tagged release older than ~6 months (as of 2026-09-29). Clones live in fixtures/<name>/ (gitignored); venvs in fixtures/.venvs/<name>/.",
+  "arrow": {
+    "repo": "https://github.com/arrow-py/arrow",
+    "tag": "1.4.0",
+    "commit": "2c1f5185ad66bf3b1cf8c0812f4b4fe65ac46656",
+    "why": "latest tag (2025-10-18), older than 6 months",
+    "import_packages": ["arrow", "tests"],
+    "test_cmd": ["-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts="],
+    "baseline_tests": {"passed": 1862, "skipped": 1, "failed": 0}
+  },
+  "httpie": {
+    "repo": "https://github.com/httpie/cli",
+    "tag": "3.2.4",
+    "commit": "2105caa49bae87c5809c274e407619a0de2639d1",
+    "why": "latest tag (2024-11-01)",
+    "import_packages": ["httpie"],
+    "baseline_tests": null
+  },
+  "rich": {
+    "repo": "https://github.com/Textualize/rich",
+    "tag": "v14.3.3",
+    "commit": "ce0118819d172d134507bcf5982d3faf82bbc43e",
+    "why": "latest tag older than 6 months is v14.3.3 (2026-02-19); v14.3.4/v15.0.0 are newer than the cut-off",
+    "import_packages": ["rich"],
+    "baseline_tests": null
+  }
+}
