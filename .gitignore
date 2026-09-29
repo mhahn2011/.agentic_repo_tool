@@ -32,3 +32,10 @@ Thumbs.db
 *.tmp
 .temp/
 03_test_repos/
+
+# E-008 study harness (TCD-020_01)
+fixtures/arrow/
+fixtures/httpie/
+fixtures/rich/
+fixtures/.venvs/
+runs/
