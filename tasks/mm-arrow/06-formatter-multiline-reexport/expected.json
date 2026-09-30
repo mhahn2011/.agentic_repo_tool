@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "module re-exported by a multi-line relative import in __init__",
+  "moves": [
+    {
+      "from": "arrow/formatter.py",
+      "to": "arrow/formatting/formatter.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/formatting/formatter.py",
+    "arrow/formatting/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/formatter.py"
+  ]
+}

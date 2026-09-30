@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "module imported via 'from arrow import a, b, locales' groups in library and tests",
+  "moves": [
+    {
+      "from": "arrow/locales.py",
+      "to": "arrow/i18n/locales.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/i18n/locales.py",
+    "arrow/i18n/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/locales.py"
+  ]
+}

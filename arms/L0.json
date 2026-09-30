@@ -1,0 +1,23 @@
+{
+  "name": "L0",
+  "level": "L0",
+  "description": "Stripped Claude Code: Bash only, no MCP, no plugins/skills/slash commands, no CLAUDE.md, minimal system prompt.",
+  "isolation_status": "UNVERIFIED until C1.9/C1.10 run live",
+  "flags": [
+    "--safe-mode",
+    "--tools", "Bash",
+    "--strict-mcp-config", "--mcp-config", "{\"mcpServers\":{}}",
+    "--disable-slash-commands",
+    "--no-session-persistence",
+    "--permission-mode", "acceptEdits",
+    "--system-prompt", "You are a coding agent. Use the shell to complete the task."
+  ],
+  "allowed_tools": ["Bash"],
+  "deny_tools": ["Bash(rm -rf*)", "Bash(git push*)", "Bash(curl*)", "Bash(wget*)"],
+  "env": {
+    "CLAUDE_CODE_DISABLE_CLAUDE_MDS": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+  },
+  "env_unset": ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"],
+  "prompt_prefix": ""
+}

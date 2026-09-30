@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "module whose name is re-exported from __init__ (ParserError) and imported by tests",
+  "moves": [
+    {
+      "from": "arrow/parser.py",
+      "to": "arrow/parsing/parser.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/parsing/parser.py",
+    "arrow/parsing/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/parser.py"
+  ]
+}

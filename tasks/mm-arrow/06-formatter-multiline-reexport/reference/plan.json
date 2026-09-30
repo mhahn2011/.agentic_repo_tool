@@ -1,0 +1,8 @@
+{
+  "moves": [
+    {
+      "from": "arrow/formatter.py",
+      "to": "arrow/formatting/formatter.py"
+    }
+  ]
+}

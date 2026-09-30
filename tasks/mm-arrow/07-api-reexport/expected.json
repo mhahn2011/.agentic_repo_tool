@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "public API module re-exported by relative import in __init__",
+  "moves": [
+    {
+      "from": "arrow/api.py",
+      "to": "arrow/public/api.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/public/api.py",
+    "arrow/public/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/api.py"
+  ]
+}

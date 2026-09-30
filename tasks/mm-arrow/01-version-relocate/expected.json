@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "single module, one relative importer (re-export from __init__)",
+  "moves": [
+    {
+      "from": "arrow/_version.py",
+      "to": "arrow/meta/_version.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/meta/_version.py",
+    "arrow/meta/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/_version.py"
+  ]
+}

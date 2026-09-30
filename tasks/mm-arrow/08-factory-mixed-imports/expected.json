@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "module with absolute, module-style and relative importers",
+  "moves": [
+    {
+      "from": "arrow/factory.py",
+      "to": "arrow/build/factory.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/build/factory.py",
+    "arrow/build/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/factory.py"
+  ]
+}

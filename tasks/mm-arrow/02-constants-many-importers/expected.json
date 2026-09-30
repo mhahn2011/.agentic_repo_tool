@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "single module, many absolute importers (6 source files + tests)",
+  "moves": [
+    {
+      "from": "arrow/constants.py",
+      "to": "arrow/core/constants.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/core/constants.py",
+    "arrow/core/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/constants.py"
+  ]
+}

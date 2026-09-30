@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "module imported both as 'from arrow.util import x' and 'from arrow import util'",
+  "moves": [
+    {
+      "from": "arrow/util.py",
+      "to": "arrow/helpers/util.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/helpers/util.py",
+    "arrow/helpers/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/util.py"
+  ]
+}

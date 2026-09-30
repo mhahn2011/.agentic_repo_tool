@@ -1,0 +1,23 @@
+{
+  "fixture": "arrow",
+  "difficulty": "two related modules moved into one new package in a single plan",
+  "moves": [
+    {
+      "from": "arrow/parser.py",
+      "to": "arrow/text/parser.py"
+    },
+    {
+      "from": "arrow/formatter.py",
+      "to": "arrow/text/formatter.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/text/parser.py",
+    "arrow/text/formatter.py",
+    "arrow/text/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/parser.py",
+    "arrow/formatter.py"
+  ]
+}

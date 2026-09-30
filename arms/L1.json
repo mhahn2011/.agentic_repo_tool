@@ -1,0 +1,25 @@
+{
+  "name": "L1",
+  "level": "L1",
+  "tool_treatment": "map-and-move",
+  "description": "L0 plus exactly one domain tool: the map-and-move CLI on PATH-equivalent absolute path, described in one paragraph of the prompt.",
+  "isolation_status": "UNVERIFIED until C1.9/C1.10 run live",
+  "flags": [
+    "--safe-mode",
+    "--tools", "Bash",
+    "--strict-mcp-config", "--mcp-config", "{\"mcpServers\":{}}",
+    "--disable-slash-commands",
+    "--no-session-persistence",
+    "--permission-mode", "acceptEdits",
+    "--system-prompt", "You are a coding agent. Use the shell to complete the task."
+  ],
+  "allowed_tools": ["Bash"],
+  "deny_tools": ["Bash(rm -rf*)", "Bash(git push*)", "Bash(curl*)", "Bash(wget*)"],
+  "env": {
+    "CLAUDE_CODE_DISABLE_CLAUDE_MDS": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+  },
+  "env_unset": ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"],
+  "tool_path": ".agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move/cli/refactor_tool.py",
+  "prompt_prefix": "A tool is available for moving Python modules safely: `python {TOOL} --plan plan.json --root . --yes --no-commit --dry-run` (drop --dry-run to apply). plan.json is {\"moves\":[{\"from\":\"pkg/a.py\",\"to\":\"pkg/sub/a.py\"}]}. It moves the files, creates missing __init__.py files and rewrites the import statements it can find. Check its result yourself: it does not catch every import form.\n\n"
+}

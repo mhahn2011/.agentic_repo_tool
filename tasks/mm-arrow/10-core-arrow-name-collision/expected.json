@@ -1,0 +1,17 @@
+{
+  "fixture": "arrow",
+  "difficulty": "core module whose name equals its package (arrow.arrow); imported everywhere",
+  "moves": [
+    {
+      "from": "arrow/arrow.py",
+      "to": "arrow/core/arrow.py"
+    }
+  ],
+  "must_exist": [
+    "arrow/core/arrow.py",
+    "arrow/core/__init__.py"
+  ],
+  "must_not_exist": [
+    "arrow/arrow.py"
+  ]
+}

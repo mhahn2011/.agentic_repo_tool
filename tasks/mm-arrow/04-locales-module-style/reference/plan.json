@@ -1,0 +1,8 @@
+{
+  "moves": [
+    {
+      "from": "arrow/locales.py",
+      "to": "arrow/i18n/locales.py"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "moves": [
+    {
+      "from": "arrow/parser.py",
+      "to": "arrow/text/parser.py"
+    },
+    {
+      "from": "arrow/formatter.py",
+      "to": "arrow/text/formatter.py"
+    }
+  ]
+}

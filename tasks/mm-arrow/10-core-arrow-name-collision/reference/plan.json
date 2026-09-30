@@ -1,0 +1,8 @@
+{
+  "moves": [
+    {
+      "from": "arrow/arrow.py",
+      "to": "arrow/core/arrow.py"
+    }
+  ]
+}
