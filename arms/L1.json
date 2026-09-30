@@ -20,6 +20,7 @@
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
   },
   "env_unset": ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"],
+  "container_tool_path": "/opt/tools/script_map_and_move/cli/refactor_tool.py",
   "tool_path": ".agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/script_map_and_move/cli/refactor_tool.py",
   "prompt_prefix": "A tool is available for moving Python modules safely: `python {TOOL} --plan plan.json --root . --yes --no-commit --dry-run` (drop --dry-run to apply). plan.json is {\"moves\":[{\"from\":\"pkg/a.py\",\"to\":\"pkg/sub/a.py\"}]}. It moves the files, creates missing __init__.py files and rewrites the import statements it can find. Check its result yourself: it does not catch every import form.\n\n"
 }

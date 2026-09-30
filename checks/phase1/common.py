@@ -38,3 +38,33 @@ def blocked(why: str, command: str):
 
 def pins():
     return json.loads((ROOT / "fixtures" / "pins.json").read_text(encoding="utf-8"))
+
+
+# ---- live checks in a container (Phase 1b). Nothing below starts a session unless --live AND the token are present.
+IMAGE = "e008/trial-arrow:1"
+TOKEN_VAR = "CLAUDE_CODE_OAUTH_TOKEN"
+
+
+def live_gate(would_run: str):
+    """Exit 77 BLOCKED unless argv has --live and the OAuth token is in the environment (never printed)."""
+    import os
+    has_flag, has_tok = "--live" in sys.argv, bool(os.environ.get(TOKEN_VAR))
+    if has_flag and has_tok:
+        return
+    missing = [m for m, ok in (("--live flag", has_flag), (TOKEN_VAR + " env var", has_tok)) if not ok]
+    print("BLOCKED: awaiting approval for live trials (needs --live and a token)")
+    print("missing:", ", ".join(missing))
+    print("would run:", would_run)
+    sys.exit(BLOCKED)
+
+
+def sandbox():
+    sys.path.insert(0, str(ROOT / "runner"))
+    import sandbox_docker
+    return sandbox_docker
+
+
+def arm_cmd(arm_name: str, model: str = "haiku", claude: str = "claude"):
+    sys.path.insert(0, str(ROOT / "runner"))
+    import run_trial
+    return run_trial.build_cmd([claude], run_trial.load_arm(arm_name), model)

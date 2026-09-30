@@ -1,8 +1,9 @@
-"""C1.9 L0 is stripped: parse the system/init message of a real L0 run. BLOCKED until live trials approved.
-check_init() is exercised offline by runner/tests against a synthetic init message."""
-import os
+"""C1.9 L0 is stripped: parse the system/init message of a real L0 run in a container.
+Needs `--live` and CLAUDE_CODE_OAUTH_TOKEN, else exit 77. check_init() is unit-tested offline.
+In the container ~/.claude is empty by construction, so this isolates the flags, not the host config."""
+import sys
 
-from common import blocked, finish
+from common import IMAGE, arm_cmd, finish, live_gate, sandbox
 
 
 def check_init(init: dict, model: str = "") -> list:
@@ -22,7 +23,13 @@ def check_init(init: dict, model: str = "") -> list:
 
 
 if __name__ == "__main__":
-    if os.environ.get("E008_LIVE_APPROVED") != "1":
-        blocked("needs a real L0 session",
-                "python runner/run_trial.py <canary-task> L0 haiku 1, then check_init(init message)")
-    finish(False, "live path not implemented in Phase 1a")
+    live_gate("L0 arm command in a fresh container, prompt 'hi'; check_init(system/init)")
+    sd = sandbox()
+    import run_trial
+    r = sd.run_claude_once(IMAGE, arm_cmd("L0"), "hi", timeout=180)
+    init = run_trial.parse_stream(r["stdout"])["init"]
+    if not init:
+        finish(False, f"no init message (rc={r['exit_code']}): {r['stderr'][-200:]!r}")
+    print("init keys:", sorted(init), file=sys.stderr)  # turns the guessed field names into observed ones
+    bad = check_init(init, "haiku")
+    finish(not bad, "; ".join(bad) or "L0 init: tools==[Bash], no mcp/plugins/skills")

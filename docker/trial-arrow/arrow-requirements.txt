@@ -1,0 +1,16 @@
+# pip freeze of fixtures/.venvs/arrow (Phase 1a baseline 1862 passed / 1 skipped), minus the editable arrow line.
+colorama==0.4.6
+dateparser==1.4.3
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+pytest==9.1.1
+pytest-mock==3.16.0
+python-dateutil==2.9.0.post0
+pytz==2025.2
+regex==2026.9.29
+simplejson==3.20.2
+six==1.17.0
+tzdata==2026.4
+tzlocal==5.4.4

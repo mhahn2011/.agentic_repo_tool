@@ -27,6 +27,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 import grade as grader  # noqa: E402
+import sandbox_docker  # noqa: E402
 
 DEFAULT_CLAUDE = r"C:\Users\willi\.local\bin\claude.exe"
 REJECT_RE = re.compile(r"rate.?limit|usage limit|limit (reached|exceeded)|hit your limit|too many requests|429", re.I)
@@ -135,7 +136,14 @@ def main(argv=None) -> int:
     ap.add_argument("--claude-bin", default=None)
     ap.add_argument("--timeout", type=int, default=900)
     ap.add_argument("--out-dir", default=str(ROOT / "runs" / "adhoc"))
-    ap.add_argument("--keep", action="store_true", help="keep the worktree for inspection")
+    ap.add_argument("--keep", action="store_true", help="keep the worktree/container for inspection")
+    ap.add_argument("--sandbox", choices=["none", "docker"], default="none")
+    ap.add_argument("--image", default=sandbox_docker.DEFAULT_IMAGE, help="docker sandbox image")
+    ap.add_argument("--container-claude", default="claude", help="claude command inside the container")
+    ap.add_argument("--container-env", action="append", default=[], metavar="K=V",
+                    help="extra NON-SECRET env var for the agent in the container (tests)")
+    ap.add_argument("--network", default=None, help="docker network (default: docker default bridge)")
+    ap.add_argument("--live", action="store_true", help="allow a real claude session (docker sandbox only)")
     a = ap.parse_args(argv)
 
     task_dir = ROOT / "tasks" / a.task
@@ -144,11 +152,18 @@ def main(argv=None) -> int:
     pin = grader.load_pins()[exp["fixture"]]
 
     prompt = arm.get("prompt_prefix", "")
-    if arm.get("tool_path"):
-        prompt = prompt.replace("{TOOL}", str(ROOT / arm["tool_path"]))
+    in_docker = a.sandbox == "docker"
+    real_claude = in_docker and os.path.basename(a.container_claude) == "claude"
+    if real_claude and not (a.live and os.environ.get(sandbox_docker.TOKEN_VAR)):
+        print("BLOCKED: a real claude session in a container needs --live and CLAUDE_CODE_OAUTH_TOKEN "
+              "(live trials need Michael's approval)")
+        return 77
+    tool = arm.get("container_tool_path") if in_docker else (str(ROOT / arm["tool_path"]) if arm.get("tool_path") else None)
+    if tool:
+        prompt = prompt.replace("{TOOL}", tool)
     prompt += (task_dir / "task.md").read_text(encoding="utf-8")
 
-    cmd = build_cmd(resolve_claude(a.claude_bin), arm, a.model)
+    cmd = build_cmd([a.container_claude] if in_docker else resolve_claude(a.claude_bin), arm, a.model)
     env = dict(os.environ)
     for k in arm.get("env_unset", []):
         env.pop(k, None)
@@ -158,26 +173,41 @@ def main(argv=None) -> int:
            "trial": a.trial, "model_alias": a.model, "level": arm["level"], "tool_treatment": arm.get("tool_treatment"),
            "arm_config_hash": hashlib.sha256(json.dumps(arm, sort_keys=True).encode()).hexdigest()[:16],
            "prompt_hash": hashlib.sha256(prompt.encode()).hexdigest()[:16],
-           "host": platform.node(), "container_image": None,
+           "host": platform.node(), "container_image": None, "sandbox": a.sandbox,
            "started_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
     t0 = time.time()
     wt, launch_error, timed_out, exit_code, stdout, stderr = None, None, False, None, "", ""
+    out = Path(a.out_dir) / a.task.replace("/", "__") / a.arm / a.model / str(a.trial)
     try:
-        wt = make_worktree(exp["fixture"], pin["commit"])
-        try:
-            p = subprocess.run(cmd, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                               cwd=str(wt), timeout=a.timeout, env=env)
-            exit_code, stdout, stderr = p.returncode, p.stdout, p.stderr
-        except subprocess.TimeoutExpired as exc:
-            timed_out, exit_code = True, -1
-            stdout = exc.stdout.decode("utf-8", "replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
-        except OSError as exc:
-            launch_error = f"could not launch claude: {exc}"
-        agent_s = time.time() - t0
-        parsed = parse_stream(stdout)
-        g = grader.grade(wt, task_dir)
-        git(["add", "--intent-to-add", "."], cwd=wt)
-        _, diff = git(["diff", "HEAD"], cwd=wt)
+        if in_docker:
+            cenv = dict(kv.split("=", 1) for kv in a.container_env)
+            cenv.update(arm.get("env", {}))
+            r = sandbox_docker.run_in_container(a.image, cmd, prompt, cenv, ROOT, a.task, out, a.timeout,
+                                                network=a.network, keep=a.keep)
+            exit_code, stdout, stderr, timed_out = r["exit_code"], r["stdout"], r["stderr"], r["timed_out"]
+            launch_error = r["launch_error"]
+            rec["container_image"] = r["image_id"]
+            if launch_error:
+                raise RuntimeError(launch_error)
+            agent_s = time.time() - t0
+            parsed = parse_stream(stdout)
+            g, diff = r["grade"], r["diff"]
+        else:
+            wt = make_worktree(exp["fixture"], pin["commit"])
+            try:
+                p = subprocess.run(cmd, input=prompt, capture_output=True, text=True, encoding="utf-8",
+                                   errors="replace", cwd=str(wt), timeout=a.timeout, env=env)
+                exit_code, stdout, stderr = p.returncode, p.stdout, p.stderr
+            except subprocess.TimeoutExpired as exc:
+                timed_out, exit_code = True, -1
+                stdout = exc.stdout.decode("utf-8", "replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+            except OSError as exc:
+                launch_error = f"could not launch claude: {exc}"
+            agent_s = time.time() - t0
+            parsed = parse_stream(stdout)
+            g = grader.grade(wt, task_dir)
+            git(["add", "--intent-to-add", "."], cwd=wt)
+            _, diff = git(["diff", "HEAD"], cwd=wt)
     except Exception as exc:  # noqa: BLE001 - any harness failure is recorded, never raised
         launch_error = launch_error or f"{type(exc).__name__}: {exc}"
         agent_s = time.time() - t0
@@ -205,7 +235,6 @@ def main(argv=None) -> int:
     if a.claude_bin and a.claude_bin.lower().endswith(".py") or launch_error:
         rec["note"] = "fake claude" if not launch_error else launch_error
 
-    out = Path(a.out_dir) / a.task.replace("/", "__") / a.arm / a.model / str(a.trial)
     out.mkdir(parents=True, exist_ok=True)
     (out / "record.json").write_text(json.dumps(rec, indent=2), encoding="utf-8")
     (out / "transcript.jsonl").write_text(stdout, encoding="utf-8")

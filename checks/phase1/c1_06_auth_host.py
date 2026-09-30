@@ -1,11 +1,7 @@
-"""C1.6 Subscription auth on host. BLOCKED until Michael approves live trials.
+"""C1.6 Subscription auth on the HOST. Superseded by C1.7 (container) for the study; kept BLOCKED and unrun.
 This script never launches claude; it only prints the command to run by hand after approval."""
-import os
-
-from common import blocked, finish
+from common import blocked
 
 CMD = ('claude -p "reply with the single word ok" --output-format json --model haiku  '
        '(ANTHROPIC_API_KEY unset; CLAUDE_CODE_OAUTH_TOKEN set)')
-if os.environ.get("E008_LIVE_APPROVED") != "1":
-    blocked("live claude call needs explicit sign-off", CMD)
-finish(False, "live path not implemented in Phase 1a; run by hand after approval: " + CMD)
+blocked("host live call needs explicit sign-off; the study path is C1.7 in a container", CMD)

@@ -7,7 +7,8 @@
     "why": "latest tag (2025-10-18), older than 6 months",
     "import_packages": ["arrow", "tests"],
     "test_cmd": ["-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts="],
-    "baseline_tests": {"passed": 1862, "skipped": 1, "failed": 0}
+    "baseline_tests": {"passed": 1862, "skipped": 1, "failed": 0},
+    "baseline_tests_linux": {"passed": 1865, "skipped": 0, "failed": 0, "where": "e008/trial-arrow:1 container, python 3.12"}
   },
   "httpie": {
     "repo": "https://github.com/httpie/cli",

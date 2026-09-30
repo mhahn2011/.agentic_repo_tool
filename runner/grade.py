@@ -26,6 +26,8 @@ def _run(cmd, cwd, timeout, env=None):
 
 
 def venv_python(fixture: str) -> str:
+    if os.environ.get("E008_PYTHON"):  # inside the trial container: system python holds the test deps
+        return os.environ["E008_PYTHON"]
     return str(ROOT / "fixtures" / ".venvs" / fixture / "Scripts" / "python.exe")
 
 
@@ -64,7 +66,9 @@ def grade(worktree, task_dir, test_timeout=600) -> dict:
         detail["imports"] = {"ok": False, "error": out[-300:]}
 
     # 4. tests at baseline count
-    base = pin["baseline_tests"]["passed"]
+    # the baseline is per platform: arrow skips 3 tests on Windows that run on Linux (container: 1865 / 0)
+    bkey = "baseline_tests_linux" if sys.platform.startswith("linux") and pin.get("baseline_tests_linux") else "baseline_tests"
+    base = pin[bkey]["passed"]
     rc, out = _run([py] + pin["test_cmd"], worktree, test_timeout, env)
     m = re.search(r"(\d+) passed", out)
     passed = int(m.group(1)) if m else 0

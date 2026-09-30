@@ -39,3 +39,5 @@ fixtures/httpie/
 fixtures/rich/
 fixtures/.venvs/
 runs/
+
+docker/trial-arrow/ctx/
