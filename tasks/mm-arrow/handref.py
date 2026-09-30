@@ -107,8 +107,18 @@ def rewrite_file(f: Path, root: Path, mapping: dict):
         lines[s:e] = [txt]
     text = "".join(lines)
     # 3. dotted-name strings such as mocker.patch("arrow.parser.X")
+    # if the file rebinds the top-level package name (e.g. 'from arrow import arrow'), a bare 'arrow.x' is an
+    # attribute of that module, not of the package: only rewrite quoted strings there
+    try:
+        bound = {(al.asname or al.name) for n in ast.walk(ast.parse(text)) if isinstance(n, ast.ImportFrom)
+                 for al in n.names}
+    except SyntaxError:
+        bound = set()
     for old, new in mapping.items():
-        text = re.sub(rf"(?<=[\"'])({re.escape(old)})(?=[.\"'])", new, text)
+        if old.split(".")[0] in bound:
+            text = re.sub(rf"(?<=[\"'])({re.escape(old)})(?=[.\"'])", new, text)
+        else:
+            text = re.sub(rf"(?<![\w.])({re.escape(old)})(?![\w])", new, text)  # strings and attribute access
     if text != src:
         f.write_text(text, encoding="utf-8")
 
