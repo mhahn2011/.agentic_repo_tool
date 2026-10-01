@@ -28,6 +28,7 @@ ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 import grade as grader  # noqa: E402
 import sandbox_docker  # noqa: E402
+from proc import run_until_result  # noqa: E402
 
 DEFAULT_CLAUDE = r"C:\Users\willi\.local\bin\claude.exe"
 REJECT_RE = re.compile(r"rate.?limit|usage limit|limit (reached|exceeded)|hit your limit|too many requests|429", re.I)
@@ -79,12 +80,16 @@ def parse_stream(stdout: str) -> dict:
     return out
 
 
-def classify(timed_out, exit_code, parsed, grade_pass, launch_error) -> str:
-    """pass | fail | timeout | harness_error | rate_limited | auth_error"""
+def classify(timed_out, exit_code, parsed, grade_pass, launch_error, hung_after_result=False) -> str:
+    """pass | fail | timeout | harness_error | rate_limited | auth_error
+    hung_after_result: the session emitted `result` but was killed after the grace period, so its exit code is
+    the kill's, not the agent's; classify from the result and the grade."""
     if launch_error:
         return "harness_error"
     if timed_out:
         return "timeout"
+    if hung_after_result and parsed["result"] is not None:
+        exit_code = 0
     res, rate = parsed["result"], parsed["rate_limit"] or {}
     text = str((res or {}).get("result") or "")
     errored = bool(res and res.get("is_error")) or (exit_code not in (0, None) and res is None)
@@ -135,6 +140,8 @@ def main(argv=None) -> int:
     ap.add_argument("trial", type=int)
     ap.add_argument("--claude-bin", default=None)
     ap.add_argument("--timeout", type=int, default=900)
+    ap.add_argument("--result-grace", type=float, default=30,
+                    help="seconds the agent may take to exit after its result event before it is killed")
     ap.add_argument("--out-dir", default=str(ROOT / "runs" / "adhoc"))
     ap.add_argument("--keep", action="store_true", help="keep the worktree/container for inspection")
     ap.add_argument("--sandbox", choices=["none", "docker"], default="none")
@@ -177,14 +184,16 @@ def main(argv=None) -> int:
            "started_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
     t0 = time.time()
     wt, launch_error, timed_out, exit_code, stdout, stderr = None, None, False, None, "", ""
+    hung = False
     out = Path(a.out_dir) / a.task.replace("/", "__") / a.arm / a.model / str(a.trial)
     try:
         if in_docker:
             cenv = dict(kv.split("=", 1) for kv in a.container_env)
             cenv.update(arm.get("env", {}))
             r = sandbox_docker.run_in_container(a.image, cmd, prompt, cenv, ROOT, a.task, out, a.timeout,
-                                                network=a.network, keep=a.keep)
+                                                network=a.network, keep=a.keep, grace=a.result_grace)
             exit_code, stdout, stderr, timed_out = r["exit_code"], r["stdout"], r["stderr"], r["timed_out"]
+            hung = r["hung_after_result"]
             launch_error = r["launch_error"]
             rec["container_image"] = r["image_id"]
             if launch_error:
@@ -195,12 +204,9 @@ def main(argv=None) -> int:
         else:
             wt = make_worktree(exp["fixture"], pin["commit"])
             try:
-                p = subprocess.run(cmd, input=prompt, capture_output=True, text=True, encoding="utf-8",
-                                   errors="replace", cwd=str(wt), timeout=a.timeout, env=env)
-                exit_code, stdout, stderr = p.returncode, p.stdout, p.stderr
-            except subprocess.TimeoutExpired as exc:
-                timed_out, exit_code = True, -1
-                stdout = exc.stdout.decode("utf-8", "replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+                r = run_until_result(cmd, prompt, a.timeout, a.result_grace, cwd=str(wt), env=env)
+                exit_code, stdout, stderr = r["exit_code"], r["stdout"], r["stderr"]
+                timed_out, hung = r["timed_out"], r["hung_after_result"]
             except OSError as exc:
                 launch_error = f"could not launch claude: {exc}"
             agent_s = time.time() - t0
@@ -228,8 +234,8 @@ def main(argv=None) -> int:
                 "cache_read": usage.get("cache_read_input_tokens")},
         notional_cost_usd=res.get("total_cost_usd"), total_cost_usd=res.get("total_cost_usd"),
         rate_limit=parsed["rate_limit"] or {"status": None},
-        exit_status=exit_code, harness_error=launch_error,
-        failure_class=classify(timed_out, exit_code, parsed, g["pass"], launch_error),
+        exit_status=exit_code, harness_error=launch_error, hung_after_result=hung,
+        failure_class=classify(timed_out, exit_code, parsed, g["pass"], launch_error, hung),
         grader={"deterministic": {"pass": g["pass"], "detail": g["detail"]}},
     )
     if a.claude_bin and a.claude_bin.lower().endswith(".py") or launch_error:

@@ -15,6 +15,8 @@ import subprocess
 import uuid
 from pathlib import Path
 
+from proc import run_until_result
+
 DEFAULT_IMAGE = "e008/trial-arrow:1"
 DESKTOP_BIN = r"C:\Program Files\Docker\Docker\resources\bin"
 TOKEN_VAR = "CLAUDE_CODE_OAUTH_TOKEN"
@@ -53,12 +55,14 @@ def agent_exec_args(name, cmd, extra_env):
     return args + list(cmd)
 
 
-def run_in_container(image, cmd, prompt, extra_env, grader_root, task, out_dir, timeout, network=None, keep=False):
-    """Returns dict: exit_code, stdout, stderr, timed_out, launch_error, grade(dict|None), diff, image_id, name."""
+def run_in_container(image, cmd, prompt, extra_env, grader_root, task, out_dir, timeout, network=None, keep=False,
+                     grace=30):
+    """Returns dict: exit_code, stdout, stderr, timed_out, hung_after_result, launch_error, grade(dict|None), diff,
+    image_id, name."""
     name = f"e008-trial-{uuid.uuid4().hex[:8]}"
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    res = {"exit_code": None, "stdout": "", "stderr": "", "timed_out": False, "launch_error": None, "grade": None,
+    res = {"exit_code": None, "stdout": "", "stderr": "", "timed_out": False, "hung_after_result": False, "launch_error": None, "grade": None,
            "diff": "", "image_id": image_id(image), "name": name}
     create = ["create", "--name", name, "--label", "e008=trial", "-v", f"{out_dir.resolve()}:/out"]
     if network:
@@ -70,13 +74,10 @@ def run_in_container(image, cmd, prompt, extra_env, grader_root, task, out_dir, 
         rc, _, err = _docker(["start", name])
         if rc:
             raise RuntimeError(f"docker start failed: {err.strip()[:300]}")
-        try:
-            p = subprocess.run([docker_bin()] + agent_exec_args(name, cmd, extra_env), input=prompt,
-                               capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
-            res.update(exit_code=p.returncode, stdout=p.stdout, stderr=p.stderr)
-        except subprocess.TimeoutExpired as exc:
-            out = exc.stdout
-            res.update(timed_out=True, exit_code=-1, stdout=out.decode("utf-8", "replace") if isinstance(out, bytes) else (out or ""))
+        r = run_until_result([docker_bin()] + agent_exec_args(name, cmd, extra_env), prompt, timeout, grace)
+        res.update(r)
+        if r["timed_out"] or r["hung_after_result"]:
+            # killing the docker CLI leaves the agent running in the container; stop it before grading
             _docker(["exec", name, "sh", "-c", "kill -9 -1"], timeout=30)
         res["grade"], res["diff"] = _grade_inside(name, grader_root, task, out_dir)
     except Exception as exc:  # noqa: BLE001 - recorded by the caller as harness_error

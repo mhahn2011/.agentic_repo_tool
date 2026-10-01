@@ -19,7 +19,7 @@ TOOL = (ROOT / ".agentic_repo_tools/01_project_agnostic_system/01_composable_ele
         "script_map_and_move/cli/refactor_tool.py")
 
 
-def run(mode="ok", edit=None, task=TASK, arm="L0", timeout=300, extra_env=None):
+def run(mode="ok", edit=None, task=TASK, arm="L0", timeout=300, extra_env=None, extra_args=()):
     out = Path(tempfile.mkdtemp())
     env = {"FAKE_MODE": mode, "FAKE_PROMPT_OUT": str(out / "prompt.txt"), "FAKE_ARGV_OUT": str(out / "argv.json"),
            "FAKE_ENV_OUT": str(out / "env.json")}
@@ -31,7 +31,7 @@ def run(mode="ok", edit=None, task=TASK, arm="L0", timeout=300, extra_env=None):
     os.environ["ANTHROPIC_API_KEY"] = "sk-test-should-be-stripped"
     try:
         rc = run_trial.main([task, arm, "haiku", "1", "--claude-bin", FAKE, "--out-dir", str(out / "runs"),
-                             "--timeout", str(timeout)])
+                             "--timeout", str(timeout), *extra_args])
     finally:
         for k, v in old.items():
             os.environ.pop(k, None) if v is None else os.environ.__setitem__(k, v)
@@ -138,3 +138,21 @@ class InitCheck(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HangAfterResultTests(unittest.TestCase):
+    def test_hang_after_result_ends_trial_and_is_graded(self):
+        rc, rec, _ = run(mode="hang", timeout=300, extra_args=("--result-grace", "2"))
+        self.assertTrue(rec["hung_after_result"])
+        self.assertLess(rec["wall_s"], 45)
+        self.assertEqual(rec["failure_class"], "fail")  # untouched tree: graded, not "timeout"
+        self.assertEqual(rec["turns"], 4)
+
+    def test_clean_exit_not_flagged(self):
+        rc, rec, _ = run(mode="ok")
+        self.assertFalse(rec["hung_after_result"])
+
+    def test_classify_hung_uses_grade(self):
+        parsed = {"result": {"is_error": False, "result": "done"}, "rate_limit": None, "init": None}
+        self.assertEqual(run_trial.classify(False, -9, parsed, True, None, hung_after_result=True), "pass")
+        self.assertEqual(run_trial.classify(False, -9, parsed, True, None), "harness_error")

@@ -1,7 +1,7 @@
 """Fake claude CLI for runner tests (pattern from MissionHub relay/tests/fake_claude.py). Never talks to any API.
 
 Env controls:
-  FAKE_MODE       ok (default) | sleep | rate | autherr | crash
+  FAKE_MODE       ok (default) | sleep | rate | autherr | crash | hang (prints the result, then never exits)
   FAKE_EDIT_CMD   shell command run in cwd before answering (simulates the agent doing the work)
   FAKE_PROMPT_OUT file to write the stdin prompt to
   FAKE_ARGV_OUT   file to write argv (JSON) to
@@ -48,4 +48,7 @@ print(json.dumps({"type": "result", "is_error": is_error, "result": text, "sessi
                   "num_turns": 4, "total_cost_usd": 0.0123, "duration_ms": 1500,
                   "usage": {"input_tokens": 100, "output_tokens": 50, "cache_creation_input_tokens": 10,
                             "cache_read_input_tokens": 200}}))
+sys.stdout.flush()
+if mode == "hang":  # seen live 2026-10-01: result emitted, process never exited
+    time.sleep(60)
 sys.exit(1 if is_error else 0)
