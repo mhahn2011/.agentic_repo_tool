@@ -36,3 +36,20 @@ unverified.
 2. Does `--safe-mode` keep OAuth working under `-p`? (help says auth works normally)
 3. Does the CANARY in cwd `CLAUDE.md` and `~/.claude/CLAUDE.md` stay invisible? Control run must leak it.
 4. Do `CLAUDE_CODE_*` env guards exist?
+
+## Live results (2026-10-01, container `e008/trial-arrow:1`, claude 2.1.284, Haiku)
+
+- **C1.7 pass:** OAuth via `CLAUDE_CODE_OAUTH_TOKEN` works in the container under `-p`; no API key; token not in image or repo.
+- **C1.9, first run: fail.** `--safe-mode` keeps *built-in* plugins by design (help text: "built-in tools and plugins" still apply). Init
+  listed `agents-md@builtin` and `telemetry@builtin`. `agents-md` is a context-file loader, so it matters for L0. **Fix:** added
+  `--settings '{"enabledPlugins":{"agents-md@builtin":false,"telemetry@builtin":false}}'` to L0 (`--settings` still applies under
+  safe-mode; the same setting is what `claude plugin disable <name>@builtin` writes). **Rerun: pass**: tools `["Bash"]`, no MCP,
+  plugins, skills or slash commands. Observed init keys: agents, analytics_disabled, apiKeySource, capabilities, claude_code_version,
+  cwd, fast_mode_disabled_reason, fast_mode_state, mcp_servers, messaging_socket_path, model, output_style, per_turn_effort_active,
+  permissionMode, plugins, product_feedback_disabled, session_id, skills, slash_commands, subtype, tools, type, uuid, view_mode.
+- **C1.10, first run: fail, but uninformative.** L0 answered with the canary because it ran `find`/`grep` with Bash and read the file
+  from disk, which says nothing about context loading. Check tightened: the prompt forbids tools, and any tool call makes a session
+  inconclusive (fail). Expected results unchanged. **Rerun: pass**: L0 says NONE (with and without an empty `CLAUDE_CONFIG_DIR`);
+  the control (default Claude Code) returns the canary from loaded context.
+- Open items 1-3 above are answered. Item 4 (`CLAUDE_CODE_DISABLE_*` env guards) stays unknown in isolation: L0 passes with
+  them set, and nothing has tested them alone.

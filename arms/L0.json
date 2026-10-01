@@ -2,12 +2,13 @@
   "name": "L0",
   "level": "L0",
   "description": "Stripped Claude Code: Bash only, no MCP, no plugins/skills/slash commands, no CLAUDE.md, minimal system prompt.",
-  "isolation_status": "UNVERIFIED until C1.9/C1.10 run live",
+  "isolation_status": "VERIFIED in container 2026-10-01 (claude 2.1.284): C1.9 and C1.10 pass",
   "flags": [
     "--safe-mode",
     "--tools", "Bash",
     "--strict-mcp-config", "--mcp-config", "{\"mcpServers\":{}}",
     "--disable-slash-commands",
+    "--settings", "{\"enabledPlugins\":{\"agents-md@builtin\":false,\"telemetry@builtin\":false}}",
     "--no-session-persistence",
     "--permission-mode", "acceptEdits",
     "--system-prompt", "You are a coding agent. Use the shell to complete the task."
