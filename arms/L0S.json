@@ -1,0 +1,40 @@
+{
+  "name": "L0S",
+  "level": "L0",
+  "description": "L0 plus the current E-009 skill file injected via prompt_prefix. Driver substitutes {SKILL} per skill version; everything else identical to L0.",
+  "isolation_status": "VERIFIED in container 2026-10-01 (claude 2.1.284): C1.9 and C1.10 pass",
+  "flags": [
+    "--safe-mode",
+    "--tools",
+    "Bash",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--disable-slash-commands",
+    "--settings",
+    "{\"enabledPlugins\":{\"agents-md@builtin\":false,\"telemetry@builtin\":false}}",
+    "--no-session-persistence",
+    "--permission-mode",
+    "acceptEdits",
+    "--system-prompt",
+    "You are a coding agent. Use the shell to complete the task."
+  ],
+  "allowed_tools": [
+    "Bash"
+  ],
+  "deny_tools": [
+    "Bash(rm -rf*)",
+    "Bash(git push*)",
+    "Bash(curl*)",
+    "Bash(wget*)"
+  ],
+  "env": {
+    "CLAUDE_CODE_DISABLE_CLAUDE_MDS": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+  },
+  "env_unset": [
+    "ANTHROPIC_API_KEY",
+    "ANTHROPIC_AUTH_TOKEN"
+  ],
+  "prompt_prefix": "{SKILL}\n\n"
+}
