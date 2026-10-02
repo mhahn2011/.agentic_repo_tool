@@ -77,6 +77,37 @@ class DockerLookup(unittest.TestCase):
                 sandbox_docker.docker_bin()
 
 
+class ImportAllPlatformSkip(unittest.TestCase):
+    """Modules that refuse to import off Windows (rich._win32_console) are skipped, other failures stay broken."""
+
+    def run_import_all(self, files):
+        import json
+        import tempfile
+        root = Path(tempfile.mkdtemp())
+        pkg = root / "pkgx"
+        pkg.mkdir()
+        (pkg / "__init__.py").write_text("")
+        for name, body in files.items():
+            (pkg / name).write_text(body)
+        r = subprocess.run([sys.executable, str(ROOT / "fixtures" / "import_all.py"), str(root), "pkgx"],
+                           capture_output=True, text=True)
+        return json.loads(r.stdout.strip().splitlines()[-1])
+
+    def test_windows_only_module_skipped_off_windows(self):
+        rep = self.run_import_all({"w.py": "raise ImportError('pkgx.w can only be imported on Windows')",
+                                   "ok.py": "X = 1"})
+        if sys.platform == "win32":  # on Windows such a module would be genuinely broken
+            self.assertEqual([b["module"] for b in rep["broken"]], ["pkgx.w"])
+        else:
+            self.assertEqual(rep["broken"], [])
+            self.assertEqual([s["module"] for s in rep["skipped_platform"]], ["pkgx.w"])
+
+    def test_real_breakage_still_reported(self):
+        rep = self.run_import_all({"bad.py": "import nonexistent_module_zzz", "w.py": "raise ImportError('only be imported on Windows')"})
+        want = ["pkgx.bad", "pkgx.w"] if sys.platform == "win32" else ["pkgx.bad"]
+        self.assertEqual([b["module"] for b in rep["broken"]], want)
+
+
 @unittest.skipIf(sys.platform == "win32", "POSIX scripts")
 class PosixScripts(unittest.TestCase):
     def test_scripts_exist_and_executable(self):

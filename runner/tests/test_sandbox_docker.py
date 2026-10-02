@@ -53,8 +53,16 @@ def setUpModule():
     assert rc == 0, out
 
 
+def scratch() -> Path:
+    """Dir for the /out bind mount. Must sit under $HOME: Colima/Docker Desktop on macOS only share the home
+    directory with the VM (the system temp dir /var/folders is not shared, so the mount would be empty)."""
+    base = ROOT / "runs" / "tmp"
+    base.mkdir(parents=True, exist_ok=True)
+    return Path(tempfile.mkdtemp(dir=base))
+
+
 def trial(edit=None, extra_args=(), env=None):
-    out = Path(tempfile.mkdtemp())
+    out = scratch()
     argv = [TASK, "L0", "haiku", "1", "--sandbox", "docker", "--image", TEST_IMAGE, "--container-claude",
             "claude-fake", "--out-dir", str(out), "--timeout", "600",
             "--container-env", "FAKE_ENV_OUT=/out/env.json", "--container-env", "FAKE_ARGV_OUT=/out/argv.json"]

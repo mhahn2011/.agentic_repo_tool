@@ -1,5 +1,6 @@
 """C1.16 map-and-move: dry run changes nothing; one real move leaves 0 broken imports and baseline test count."""
 import json
+import sys
 import tempfile
 from pathlib import Path
 
@@ -33,7 +34,9 @@ except (ValueError, IndexError):
     problems.append(f"import_all output: {out[-200:]}")
 rc, out = sh([str(VENV), "-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts="], cwd=FX, timeout=300)
 summary = out.strip().splitlines()[-1] if out.strip() else ""
-if f"{p['baseline_tests']['passed']} passed" not in summary:
+sys.path.insert(0, str(ROOT / "runner"))
+import grade  # noqa: E402
+if f"{grade.baseline_for(p)['passed']} passed" not in summary:
     problems.append(f"test count != baseline: {summary}")
 sh(RESET)
 finish(not problems, "; ".join(problems) or "dry run clean, real move ok, tests at baseline")

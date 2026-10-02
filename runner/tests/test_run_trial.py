@@ -103,7 +103,7 @@ class EndToEnd(unittest.TestCase):
         self.assertFalse(Path(env["cwd"]).exists(), "worktree cleaned up")
 
     def test_pass_when_agent_does_the_work(self):
-        edit = f'python "{TOOL}" --plan "{ROOT / "tasks" / TASK / "reference" / "plan.json"}" --root . --yes --no-commit'
+        edit = f'"{sys.executable}" "{TOOL}" --plan "{ROOT / "tasks" / TASK / "reference" / "plan.json"}" --root . --yes --no-commit'
         rc, rec, _ = run(edit=edit)
         self.assertTrue(rec["grader"]["deterministic"]["pass"], rec["grader"])
         self.assertEqual(rec["failure_class"], "pass")
