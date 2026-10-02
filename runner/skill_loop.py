@@ -152,3 +152,40 @@ class Driver:
             return self._result(stop)
         except _Quota:
             return self._result("quota")
+
+
+def make_trial(runs_dir, arm="L0S", model="haiku", extra_args=()):
+    """Real trial callable: one run_trial.py trial with the skill injected and the feedback request appended.
+    Default is a live Docker trial (needs the token env var); tests pass extra_args for the fake claude.
+    tps = input + output + cache_creation tokens (uncached cost; the skill's own tokens are inside it)."""
+    import json
+    import tempfile
+
+    import run_trial
+    live = ["--sandbox", "docker", "--live"] if "--claude-bin" not in extra_args else []
+    counter = [0]
+
+    def trial(task, skill, version):
+        counter[0] += 1
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+            f.write(skill)
+        try:
+            run_trial.main([task, arm, model, str(counter[0]), "--out-dir", str(Path(runs_dir) / version),
+                            "--skill-file", f.name, "--feedback-request", *live, *extra_args])
+        finally:
+            Path(f.name).unlink()
+        d = Path(runs_dir) / version / task.replace("/", "__") / arm / model / str(counter[0])
+        rec = json.loads((d / "record.json").read_text(encoding="utf-8"))
+        tok = rec.get("tokens") or {}
+        final = ""
+        for line in (d / "transcript.jsonl").read_text(encoding="utf-8").splitlines():
+            try:
+                m = json.loads(line)
+            except ValueError:
+                continue
+            if m.get("type") == "result":
+                final = str(m.get("result") or "")
+        return {"passed": bool(rec["grader"]["deterministic"]["pass"]),
+                "tps": sum(tok.get(k) or 0 for k in ("input", "output", "cache_creation")),
+                "turns": rec.get("turns"), "final_text": final}
+    return trial

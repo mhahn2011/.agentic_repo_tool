@@ -32,6 +32,17 @@ from proc import run_until_result  # noqa: E402
 
 
 
+FEEDBACK_REQUEST = """
+
+When you have finished the task, end your final message with this section, one short line per key:
+## SKILL FEEDBACK
+helped: <what in the skill text above helped you>
+missing: <what the skill lacked that would have saved you steps>
+wrong: <anything in the skill that misled you, or none>
+change: <one concrete edit to the skill you would make>
+"""
+
+
 def default_claude(platform=None, home=None) -> str:
     """Native Claude Code install location: ~/.local/bin/claude(.exe)."""
     exe = "claude.exe" if (platform or sys.platform) == "win32" else "claude"
@@ -159,6 +170,8 @@ def main(argv=None) -> int:
                     help="extra NON-SECRET env var for the agent in the container (tests)")
     ap.add_argument("--network", default=None, help="docker network (default: docker default bridge)")
     ap.add_argument("--live", action="store_true", help="allow a real claude session (docker sandbox only)")
+    ap.add_argument("--skill-file", default=None, help="file whose text replaces {SKILL} in the arm's prompt_prefix")
+    ap.add_argument("--feedback-request", action="store_true", help="append the E-009 '## SKILL FEEDBACK' request")
     a = ap.parse_args(argv)
 
     task_dir = ROOT / "tasks" / a.task
@@ -176,7 +189,11 @@ def main(argv=None) -> int:
     tool = arm.get("container_tool_path") if in_docker else (str(ROOT / arm["tool_path"]) if arm.get("tool_path") else None)
     if tool:
         prompt = prompt.replace("{TOOL}", tool)
+    if a.skill_file is not None:
+        prompt = prompt.replace("{SKILL}", Path(a.skill_file).read_text(encoding="utf-8").strip())
     prompt += (task_dir / "task.md").read_text(encoding="utf-8")
+    if a.feedback_request:
+        prompt += FEEDBACK_REQUEST
 
     cmd = build_cmd([a.container_claude] if in_docker else resolve_claude(a.claude_bin), arm, a.model)
     env = dict(os.environ)
