@@ -189,3 +189,99 @@ def make_trial(runs_dir, arm="L0S", model="haiku", extra_args=()):
                 "tps": sum(tok.get(k) or 0 for k in ("input", "output", "cache_creation")),
                 "turns": rec.get("turns"), "final_text": final}
     return trial
+
+
+EDITOR_PROMPT = """You maintain a skill file (guidance text prepended to a weaker coding agent's prompt) for refactoring \
+tasks on a Python codebase. Below are the current skill, then {n} solver trials: each has its outcome and the \
+agent's own feedback on the skill. Decide what, if anything, to change. Write general guidance, never task answers \
+or file names of specific tasks. You may restructure, shorten or lengthen freely.
+
+Reply in exactly this form:
+## CHANGELOG
+acted on: <which notes you acted on>
+rejected: <which notes you rejected and why>
+predict: <what you expect to change>
+agreed: <0-{n}, how many notes support the change you made>
+changed: <yes|no>
+## SKILL
+<the full new skill text, or the unchanged skill>
+
+CURRENT SKILL:
+<<<
+{skill}
+>>>
+
+TRIALS:
+{trials}
+"""
+
+
+def _format_trials(trials):
+    out = []
+    for i, t in enumerate(trials, 1):
+        fb = t.get("feedback") or {}
+        out.append(f"[{i}] passed={t.get('passed')} turns={t.get('turns')} tokens={t.get('tps')}\n"
+                   + "\n".join(f"  {k}: {fb.get(k, '(no note)')}" for k in KEYS))
+    return "\n".join(out)
+
+
+def parse_edit(reply, skill):
+    """Parse the editor reply into the edit() result dict. An unparseable reply is no change."""
+    m = re.search(r"##\s*CHANGELOG\s*\n(.*?)\n##\s*SKILL\s*\n(.*)", reply or "", re.S | re.I)
+    if not m:
+        return {"skill": skill, "changed": False, "agreed": 0, "changelog": "editor reply unparseable"}
+    log, new = m.group(1).strip(), m.group(2).strip()
+    new = re.sub(r"^```\w*\n|\n```$", "", new)
+    agreed = re.search(r"agreed:\s*(\d)", log, re.I)
+    yes = re.search(r"changed:\s*yes", log, re.I)
+    return {"skill": new if yes else skill, "changed": bool(yes) and new != skill.strip(),
+            "agreed": int(agreed.group(1)) if agreed else 0, "changelog": log}
+
+
+def make_editor(model="sonnet", claude_bin="claude", run=None):
+    """Real editor: one headless claude call, no tools, prompt on stdin. `run(cmd, prompt)` -> stdout is injectable."""
+    import subprocess
+
+    def default_run(cmd, prompt):
+        return subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=600).stdout
+
+    run = run or default_run
+
+    def edit(skill, trials):
+        prompt = EDITOR_PROMPT.format(n=len(trials), skill=skill or "(empty)", trials=_format_trials(trials))
+        cmd = [claude_bin, "-p", "--model", model, "--tools", ""]
+        return parse_edit(run(cmd, prompt), skill)
+    return edit
+
+
+def main(argv=None):
+    import argparse
+    import json
+    import subprocess
+    import sys
+
+    ap = argparse.ArgumentParser(description="E-009 skill-accretion loop")
+    ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--ceiling", type=float, required=True, help="weekly seven_day ceiling from relay/pace.py")
+    ap.add_argument("--cap", type=int, default=12)
+    ap.add_argument("--probe", default=str(Path.home() / "dev/MissionHub/system/execution-context/relay/usage_probe.py"))
+    a = ap.parse_args(argv)
+    names = sorted(p.name for p in (Path(__file__).resolve().parents[1] / "tasks/mm-arrow").iterdir()
+                   if p.is_dir() and p.name[:2].isdigit())
+    ids = ["mm-arrow/" + n for n in names]
+    train = [t for t in ids if t.split("/")[1][:2] in ("03", "05", "07", "09", "10")]
+    held = [t for t in ids if t not in train]
+
+    def probe():
+        out = subprocess.run([sys.executable, a.probe], capture_output=True, text=True).stdout
+        return float(json.loads(out)["seven_day"]["utilization"])
+
+    out = Path(a.out_dir)
+    drv = Driver(train, held, make_trial(out / "runs"), make_editor(), probe, a.ceiling, out, a.cap)
+    res = drv.run()
+    (out / "result.json").write_text(json.dumps(res, indent=2))
+    print(json.dumps(res))
+
+
+if __name__ == "__main__":
+    main()
