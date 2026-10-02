@@ -8,7 +8,8 @@
     "import_packages": ["arrow", "tests"],
     "test_cmd": ["-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts="],
     "baseline_tests": {"passed": 1862, "skipped": 1, "failed": 0},
-    "baseline_tests_linux": {"passed": 1865, "skipped": 0, "failed": 0, "where": "e008/trial-arrow:1 container, python 3.12"}
+    "baseline_tests_linux": {"passed": 1865, "skipped": 0, "failed": 0, "where": "e008/trial-arrow:1 container, python 3.12"},
+    "baseline_tests_darwin": {"passed": 1863, "skipped": 0, "failed": 0, "where": "Mac (Intel, macOS 15.7), uv venv python 3.12.13"}
  },
   "httpie": {
     "repo": "https://github.com/httpie/cli",
@@ -18,6 +19,7 @@
     "import_packages": ["httpie"],
     "baseline_tests": {"passed": 1002, "skipped": 19, "failed": 3},
     "test_cmd": ["-m", "pytest", "-q", "-p", "no:cacheprovider"],
+    "baseline_tests_darwin": {"passed": 1016, "skipped": 5, "failed": 3, "where": "Mac (Intel, macOS 15.7), python 3.12.13, ~100 s; the same 3 tests fail as on Windows, so they are not Windows-only (test_naked_invocation[args3] usage text, two big5 charset-detection tests). Needs pip in the venv (plugin CLI tests): without it 18 fail."},
     "baseline_note": "Windows py3.12, ~3 min, no network hang. 3 environmental failures, not deselected: tests/test_cli_ui.py::test_naked_invocation[args3...] (usage text differs, argv0 naming on Windows); tests/test_encoding.py::test_terminal_output_{response,request}_charset_detection[big5-...] (charset detection/console encoding). Also 4 xfailed. Do NOT add '-o addopts=': httpie tests create a file literally named 'addopts=' in the clone, which Windows cannot delete via git clean (breaks reset); httpie has no addopts so the flag is unneeded."
  },
   "rich": {
@@ -27,6 +29,7 @@
     "why": "latest tag older than 6 months is v14.3.3 (2026-02-19); v14.3.4/v15.0.0 are newer than the cut-off",
     "import_packages": ["rich"],
     "baseline_tests": {"passed": 980, "skipped": 23, "failed": 0},
-    "test_cmd": ["-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts="]
+    "test_cmd": ["-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts="],
+    "baseline_tests_darwin": {"passed": 952, "skipped": 25, "failed": 0, "where": "Mac (Intel, macOS 15.7), python 3.12.13; 28 fewer passes than Windows (980), presumably Windows-specific tests, not investigated"}
  }
 }

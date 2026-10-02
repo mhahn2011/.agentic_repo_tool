@@ -33,6 +33,21 @@ class VenvLayout(unittest.TestCase):
         self.assertIn("/Scripts/python.exe" if sys.platform == "win32" else "/bin/python", p)
 
 
+class BaselineKey(unittest.TestCase):
+    PIN = {"baseline_tests": {"passed": 1862}, "baseline_tests_linux": {"passed": 1865},
+           "baseline_tests_darwin": {"passed": 1863}}
+
+    def test_per_platform(self):
+        self.assertEqual(grade.baseline_for(self.PIN, "win32")["passed"], 1862)
+        self.assertEqual(grade.baseline_for(self.PIN, "linux")["passed"], 1865)
+        self.assertEqual(grade.baseline_for(self.PIN, "darwin")["passed"], 1863)
+
+    def test_falls_back_to_default(self):
+        pin = {"baseline_tests": {"passed": 980}}
+        for plat in ("win32", "linux", "darwin"):
+            self.assertEqual(grade.baseline_for(pin, plat)["passed"], 980)
+
+
 class DefaultClaude(unittest.TestCase):
     def test_windows_default(self):
         self.assertTrue(run_trial.default_claude("win32", home="C:/h").endswith("claude.exe"))

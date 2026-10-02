@@ -37,6 +37,13 @@ def load_pins():
     return json.loads((ROOT / "fixtures" / "pins.json").read_text(encoding="utf-8"))
 
 
+def baseline_for(pin: dict, platform=None) -> dict:
+    """Per-platform test baseline: baseline_tests_<linux|darwin> if recorded, else baseline_tests (Windows/default)."""
+    plat = platform or sys.platform
+    key = "baseline_tests_linux" if plat.startswith("linux") else "baseline_tests_darwin" if plat == "darwin" else None
+    return pin[key] if key and pin.get(key) else pin["baseline_tests"]
+
+
 def grade(worktree, task_dir, test_timeout=600) -> dict:
     worktree, task_dir = Path(worktree), Path(task_dir)
     exp = json.loads((task_dir / "expected.json").read_text(encoding="utf-8"))
@@ -69,8 +76,7 @@ def grade(worktree, task_dir, test_timeout=600) -> dict:
 
     # 4. tests at baseline count
     # the baseline is per platform: arrow skips 3 tests on Windows that run on Linux (container: 1865 / 0)
-    bkey = "baseline_tests_linux" if sys.platform.startswith("linux") and pin.get("baseline_tests_linux") else "baseline_tests"
-    base = pin[bkey]["passed"]
+    base = baseline_for(pin)["passed"]
     rc, out = _run([py] + pin["test_cmd"], worktree, test_timeout, env)
     m = re.search(r"(\d+) passed", out)
     passed = int(m.group(1)) if m else 0
