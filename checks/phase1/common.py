@@ -1,11 +1,12 @@
 """Shared helpers for Phase 1 checks (TCD-020_01). Each check exits 0 = pass, 1 = fail, 77 = BLOCKED."""
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MISSIONHUB = Path(r"C:\Users\willi\dev\MissionHub")
+MISSIONHUB = Path(os.environ.get("E008_MISSIONHUB") or (Path.home() / "dev" / "MissionHub"))
 BLOCKED = 77
 PY = sys.executable
 
@@ -68,3 +69,17 @@ def arm_cmd(arm_name: str, model: str = "haiku", claude: str = "claude"):
     sys.path.insert(0, str(ROOT / "runner"))
     import run_trial
     return run_trial.build_cmd([claude], run_trial.load_arm(arm_name), model)
+
+
+def venv_py(name: str) -> Path:
+    """Python of a fixture venv (Scripts/python.exe on Windows, bin/python elsewhere)."""
+    sys.path.insert(0, str(ROOT / "runner"))
+    import grade
+    return Path(grade.venv_python(name, env={}))
+
+
+def reset_cmd(name: str) -> list:
+    """Command that restores a fixture to its pin (reset.ps1 on Windows, reset.sh elsewhere)."""
+    if sys.platform == "win32":
+        return ["powershell", "-NoProfile", "-File", str(ROOT / "fixtures" / "reset.ps1"), name]
+    return ["sh", str(ROOT / "fixtures" / "reset.sh"), name]

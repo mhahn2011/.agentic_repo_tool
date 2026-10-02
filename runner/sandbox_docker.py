@@ -18,16 +18,19 @@ from pathlib import Path
 from proc import run_until_result
 
 DEFAULT_IMAGE = "e008/trial-arrow:1"
-DESKTOP_BIN = r"C:\Program Files\Docker\Docker\resources\bin"
+# not on PATH in some shells: Docker Desktop (Windows), Homebrew (Intel / Apple silicon macOS)
+DOCKER_DIRS = (r"C:\Program Files\Docker\Docker\resources\bin", "/usr/local/bin", "/opt/homebrew/bin")
 TOKEN_VAR = "CLAUDE_CODE_OAUTH_TOKEN"
 STRIP_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")
 WORKDIR = "/work/arrow"
 
 
 def docker_bin() -> str:
-    found = shutil.which("docker") or shutil.which("docker", path=DESKTOP_BIN)
+    found = shutil.which("docker")
+    for d in DOCKER_DIRS:
+        found = found or shutil.which("docker", path=d)
     if not found:
-        raise RuntimeError("docker not found (Docker Desktop bin dir is not on PATH)")
+        raise RuntimeError("docker not found (not on PATH or in the usual Docker Desktop / Homebrew dirs)")
     return found
 
 

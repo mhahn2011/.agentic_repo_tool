@@ -30,7 +30,15 @@ import grade as grader  # noqa: E402
 import sandbox_docker  # noqa: E402
 from proc import run_until_result  # noqa: E402
 
-DEFAULT_CLAUDE = r"C:\Users\willi\.local\bin\claude.exe"
+
+
+def default_claude(platform=None, home=None) -> str:
+    """Native Claude Code install location: ~/.local/bin/claude(.exe)."""
+    exe = "claude.exe" if (platform or sys.platform) == "win32" else "claude"
+    return str(Path(home or Path.home()) / ".local" / "bin" / exe)
+
+
+DEFAULT_CLAUDE = default_claude()
 REJECT_RE = re.compile(r"rate.?limit|usage limit|limit (reached|exceeded)|hit your limit|too many requests|429", re.I)
 AUTH_RE = re.compile(r"invalid api key|not logged in|please run /login|authentication|unauthorized|401|oauth token", re.I)
 

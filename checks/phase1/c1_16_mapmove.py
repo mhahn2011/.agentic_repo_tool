@@ -3,13 +3,13 @@ import json
 import tempfile
 from pathlib import Path
 
-from common import PY, ROOT, finish, pins, sh
+from common import PY, ROOT, finish, pins, reset_cmd, sh, venv_py
 
 TOOL = (ROOT / ".agentic_repo_tools/01_project_agnostic_system/01_composable_elements/01_tools/"
         "script_map_and_move/cli/refactor_tool.py")
 FX = ROOT / "fixtures" / "arrow"
-VENV = ROOT / "fixtures" / ".venvs" / "arrow" / "Scripts" / "python.exe"
-RESET = ["powershell", "-NoProfile", "-File", str(ROOT / "fixtures" / "reset.ps1"), "arrow"]
+VENV = venv_py("arrow")
+RESET = reset_cmd("arrow")
 problems = []
 if not TOOL.exists():
     finish(False, f"tool not found: {TOOL}")

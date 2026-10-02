@@ -3,7 +3,7 @@ A fixture may instead record baseline_tests.not_runnable_reason. E008_FIXTURES l
 import json
 import os
 
-from common import ROOT, finish, pins
+from common import ROOT, finish, pins, venv_py
 
 from common import sh
 
@@ -19,7 +19,7 @@ for name in names:
     if not isinstance(bt, dict) or (bt.get("passed") is None and not bt.get("not_runnable_reason")):
         problems.append(f"{name}: baseline_tests missing")
         continue
-    py = ROOT / "fixtures" / ".venvs" / name / "Scripts" / "python.exe"
+    py = venv_py(name)
     rc, out = sh([str(py), str(ROOT / "fixtures" / "import_all.py"), str(ROOT / "fixtures" / name)]
                  + e.get("import_packages", []), timeout=300)
     try:

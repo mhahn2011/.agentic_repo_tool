@@ -25,10 +25,12 @@ def _run(cmd, cwd, timeout, env=None):
         return -2, str(exc)
 
 
-def venv_python(fixture: str) -> str:
-    if os.environ.get("E008_PYTHON"):  # inside the trial container: system python holds the test deps
-        return os.environ["E008_PYTHON"]
-    return str(ROOT / "fixtures" / ".venvs" / fixture / "Scripts" / "python.exe")
+def venv_python(fixture: str, platform=None, env=None) -> str:
+    env = os.environ if env is None else env
+    if env.get("E008_PYTHON"):  # inside the trial container: system python holds the test deps
+        return env["E008_PYTHON"]
+    exe = Path("Scripts") / "python.exe" if (platform or sys.platform) == "win32" else Path("bin") / "python"
+    return str(ROOT / "fixtures" / ".venvs" / fixture / exe)
 
 
 def load_pins():

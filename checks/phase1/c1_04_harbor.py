@@ -3,6 +3,6 @@ import os
 from pathlib import Path
 from common import finish, sh
 
-HARBOR = str(Path.home() / ".local" / "bin" / "harbor.exe")
+HARBOR = str(Path.home() / ".local" / "bin" / ("harbor.exe" if os.name == "nt" else "harbor"))
 rc, out = sh([HARBOR, "--version"], timeout=60)
 finish(rc == 0 and out.strip() != "", f"rc={rc} harbor {out.strip()}")

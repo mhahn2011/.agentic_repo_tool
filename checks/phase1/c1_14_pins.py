@@ -1,9 +1,9 @@
-"""C1.14 Fixtures pinned: pins.json has 40-hex commits; reset.ps1 restores HEAD; tree clean.
+"""C1.14 Fixtures pinned: pins.json has 40-hex commits; reset.ps1/reset.sh restores HEAD; tree clean.
 Set E008_FIXTURES=arrow (comma list) to limit which fixtures are checked (default: all three)."""
 import os
 import re
 
-from common import ROOT, finish, pins, sh
+from common import ROOT, finish, pins, reset_cmd, sh
 
 try:
     p = pins()
@@ -18,9 +18,9 @@ for name in names:
         continue
     fx = ROOT / "fixtures" / name
     (fx / "E008_DIRTY.txt").write_text("x", encoding="utf-8")  # prove the reset does something
-    rc, out = sh(["powershell", "-NoProfile", "-File", str(ROOT / "fixtures" / "reset.ps1"), name])
+    rc, out = sh(reset_cmd(name))
     if rc != 0:
-        problems.append(f"{name}: reset.ps1 rc={rc}: {out.strip()[-300:]}")
+        problems.append(f"{name}: reset rc={rc}: {out.strip()[-300:]}")
         continue
     _, head = sh(["git", "-C", str(fx), "rev-parse", "HEAD"])
     _, st = sh(["git", "-C", str(fx), "status", "--porcelain"])

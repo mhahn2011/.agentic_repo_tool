@@ -6,7 +6,7 @@ import shutil
 
 from common import ROOT, finish, sh
 
-HARBOR = str(Path.home() / ".local" / "bin" / "harbor.exe")
+HARBOR = str(Path.home() / ".local" / "bin" / ("harbor.exe" if os.name == "nt" else "harbor"))
 env = dict(os.environ, PYTHONIOENCODING="utf-8")
 env.pop("ANTHROPIC_API_KEY", None)
 jobs = ROOT / "runs" / "harbor-jobs"
