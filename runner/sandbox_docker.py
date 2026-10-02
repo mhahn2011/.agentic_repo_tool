@@ -16,11 +16,13 @@ import uuid
 from pathlib import Path
 
 from proc import run_until_result
+from keychain_token import ensure_token
 
 DEFAULT_IMAGE = "e008/trial-arrow:1"
 # not on PATH in some shells: Docker Desktop (Windows), Homebrew (Intel / Apple silicon macOS)
 DOCKER_DIRS = (r"C:\Program Files\Docker\Docker\resources\bin", "/usr/local/bin", "/opt/homebrew/bin")
 TOKEN_VAR = "CLAUDE_CODE_OAUTH_TOKEN"
+ensure_token()  # macOS: fetch from the Keychain if Claude Code stripped it from this shell
 STRIP_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")
 WORKDIR = "/work/arrow"
 

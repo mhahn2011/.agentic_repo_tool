@@ -255,6 +255,8 @@ def make_editor(model="sonnet", claude_bin="claude", run=None):
 
 
 def main(argv=None):
+    from keychain_token import ensure_token
+    ensure_token()  # editor and probe subprocesses inherit it; macOS Keychain fallback
     import argparse
     import json
     import subprocess

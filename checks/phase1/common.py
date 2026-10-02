@@ -44,6 +44,9 @@ def pins():
 # ---- live checks in a container (Phase 1b). Nothing below starts a session unless --live AND the token are present.
 IMAGE = "e008/trial-arrow:1"
 TOKEN_VAR = "CLAUDE_CODE_OAUTH_TOKEN"
+sys.path.insert(0, str(ROOT / "runner"))
+from keychain_token import ensure_token  # noqa: E402
+ensure_token()  # macOS: fetch from the Keychain if Claude Code stripped it from this shell
 
 
 def live_gate(would_run: str):
